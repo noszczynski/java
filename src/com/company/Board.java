@@ -19,7 +19,6 @@ public class Board {
     }
 
     public void writeSchema(int[][] schema, Player[] players) {
-//        System.out.println(this.rows + ":" + this.cols);
         for (int i = 0; i < this.rows + 1; i++) {
             if (i == 0) {
                 for (int j = 0; j < this.cols + 1; j++) {

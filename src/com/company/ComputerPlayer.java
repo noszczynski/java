@@ -2,6 +2,7 @@ package com.company;
 
 import java.util.Random;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class ComputerPlayer extends Player {
     ComputerPlayer(int id, String name, char sign) {
@@ -9,24 +10,27 @@ public class ComputerPlayer extends Player {
     }
 
     public Move getMove(int[][] moves, int columns, int rows) {
+        try {
+            TimeUnit.SECONDS.sleep(1);
+        } catch (Exception ex) {
+            //
+        }
         Scanner scanner = new Scanner(System.in);
         Random rand = new Random();
 
         boolean correct = false;
         int row = 0, column = 0;
 
-        while (!correct) {
-            row = rand.nextInt(rows);
-            column = rand.nextInt(rows);
+        row = rand.nextInt(rows);
+        column = rand.nextInt(rows);
+        Move move = new Move(column, row);
 
-            System.out.println("Debug Computer, move: " + moves[row][column] + "row: " + row + " column: " + column);
-
-            if (moves[row][column] == 0) {
-                correct = true;
-            }
+        if (moves[row][column] == 0) {
+            move.setOk(true);
+            return move;
         }
 
-        System.out.println("Get computer move (" + column + ":" + row + ")");
-        return new Move(column, row);
+        move.setOk(false);
+        return move;
     }
 }

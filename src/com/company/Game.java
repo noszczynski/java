@@ -25,15 +25,6 @@ public class Game {
         this.moves = arr;
     }
 
-    public void getStatus() {
-        for (int[] row : this.moves) {
-            for (int field : row) {
-                System.out.print(field);
-            }
-            System.out.println();
-        }
-    }
-
     private void refresh() {
         System.out.print("\033[H\033[2J");
         System.out.flush();
@@ -53,14 +44,14 @@ public class Game {
         Move move = null;
         boolean correct = false;
 
+        System.out.println("Ruch gracza " + player.getName() + ": ");
+
         while (!correct) {
             move = player.getMove(moves, board.getColumns(), board.getRows());
 
-            if (move.isOk()) {
-                System.out.println("Nieprawidłowy ruch!");
-
+            if (!move.isOk()) {
                 if (!(player instanceof ComputerPlayer)) {
-                    System.out.println("Nie jesteś komputerem!");
+                    System.out.println("Nieprawidłowy ruch!");
                 }
             } else {
                 correct = true;
@@ -82,6 +73,7 @@ public class Game {
         return scanner.nextInt();
     }
 
+    // TODO player.id?
     private boolean checkHorizontal(Player player) {
         int id = player.getId();
 
@@ -97,6 +89,7 @@ public class Game {
             }
 
             if (missingMovesToWin == 0) {
+                System.out.println("Won by checkHorizontal in row: " + row);
                 return true;
             }
         }
@@ -104,6 +97,7 @@ public class Game {
         return false;
     }
 
+    // TODO player.id?
     private boolean checkVertical(Player player) {
         int id = player.getId();
 
@@ -119,6 +113,7 @@ public class Game {
             }
 
             if (missingMovesToWin == 0) {
+                System.out.println("Won by checkVertical in column: " + column);
                 return true;
             }
         }
@@ -126,6 +121,7 @@ public class Game {
         return false;
     }
 
+    // TODO player.id?
     private boolean checkDiagonally(Player player) {
         int id = player.getId();
         int column = 0, row = 0;
@@ -135,38 +131,56 @@ public class Game {
 
         // direction: ⬊
         while (column + movesToWin <= columns || row + movesToWin <= rows) {
-//            System.out.println("checkDiagonally (to bottom right) - " + column + ":" + row);
+            missingMovesToWin = this.movesToWin;
 
-            for (int i = row, j = column, move = 1; move <= movesToWin; i++, j++, move++) {
+            for (
+                    int i = 0, j = column, move = 1;
+                    move <= movesToWin && column + movesToWin <= columns && row + movesToWin <= rows;
+                    i++, j++, move++
+            ) {
+                System.out.println(i + ":" + j);
                 if (moves[i][j] == id) {
                     missingMovesToWin--;
                 }
             }
 
             column++;
-            row++;
+
+            if (column == columns) {
+                column = 0;
+                row++;
+            }
         }
 
         if (missingMovesToWin == 0) {
+            System.out.println("Won by checkDiagonally (⬊) \nin column: " + column + " and row: " + row);
             return true;
         }
 
         // direction: ⬋
-        missingMovesToWin = this.movesToWin;
         column = columns - 1;
         row = rows - 1;
 
         while (column - movesToWin >= 0 || row + movesToWin <= rows) {
-//            System.out.println("checkDiagonally (to bottom left) - " + column + ":" + row);
+            missingMovesToWin = this.movesToWin;
 
-            for (int i = row, j = column, move = 1; move <= movesToWin; i++, j--, move++) {
+            for (
+                    int i = 0, j = column, move = 1;
+                    move <= movesToWin && column - movesToWin >= 0 && row + movesToWin <= rows;
+                    i++, j--, move++
+            ) {
                 if (moves[i][j] == id) {
+                    System.out.println("Won by checkDiagonally (⬋) \nin column: " + column + " and row: " + row);
                     missingMovesToWin--;
                 }
             }
 
             column--;
-            row++;
+
+            if (column == -1) {
+                column = columns - 1;
+                row++;
+            }
         }
 
         return missingMovesToWin == 0;
@@ -176,9 +190,16 @@ public class Game {
         // limit for two players
         for (int i = 1; i <= 2; i++) {
             Player currentPlayer = players[i];
-            boolean isPlayerWon = this.checkHorizontal(currentPlayer) || this.checkVertical(currentPlayer) || this.checkDiagonally(currentPlayer);
+            boolean isWonHorizontal = this.checkHorizontal(currentPlayer);
+            boolean isWonVertical = this.checkVertical(currentPlayer);
+            boolean isWonDiagonally = this.checkDiagonally(currentPlayer);
+            boolean isPlayerWon = isWonHorizontal || isWonVertical || isWonDiagonally;
 
             if (isPlayerWon) {
+                if (isWonHorizontal) System.out.println("Won by horizontal match!");
+                if (isWonVertical) System.out.println("Won by vertical match!");
+                if (isWonDiagonally) System.out.println("Won by diagonally match!");
+
                 players[0] = currentPlayer;
                 return true;
             }
@@ -190,7 +211,7 @@ public class Game {
     public void start() {
 //        int size = this.readSize();
 //        int movesToWin = this.readMovesToWin();
-        int size = 3, movesToWinMOCK = 3;
+        int size = 4, movesToWinMOCK = 3;
 
         this.movesToWin = movesToWinMOCK;
         this.board = new Board(size, size, movesToWinMOCK);
@@ -207,8 +228,8 @@ public class Game {
             for (int i = 1; i <= 2; i++) {
                 this.makeMove(players[i]);
 
-                if (this.checkWinner(players)) {
-                   break;
+                if (turn >= movesToWin * 2 - 1 && this.checkWinner(players)) {
+                    break;
                 }
             }
         }

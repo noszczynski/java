@@ -31,23 +31,25 @@ public class Player {
 
     public Move getMove(int[][] moves, int columns, int rows) {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Ruch gracza " + this.name + ": ");
+        String moveInput = scanner.nextLine();
 
         boolean correct = false;
-        int column = 1, row = 1;
+        char columnChar, rowChar;
+        int column, row;
 
-        while (!correct) {
-            String move = scanner.nextLine();
-            column = (int) move.charAt(0) - 65;
-            row = (int) move.charAt(1) - 49;
+        columnChar = Character.toUpperCase(moveInput.charAt(0));
+        rowChar = moveInput.charAt(1);
+        column = ((int) columnChar) - 65;
+        row = ((int) rowChar) - 49;
 
-            System.out.println("Debug Player, move: " + moves[row][column] + "row: " + row + " column: " + column);
+        Move move = new Move(column, row);
 
-            if (moves[row][column] == 0) {
-                correct = true;
-            }
+        if (moves[row][column] == 0) {
+            move.setOk(true);
+            return move;
         }
 
-        return new Move(column, row);
+        move.setOk(false);
+        return move;
     }
 }
