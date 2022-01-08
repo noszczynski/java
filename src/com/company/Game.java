@@ -53,24 +53,8 @@ public class Game {
     }
 
     public void getMove(Player player) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Ruch gracza " + player.getName() + ": ");
-        boolean correct = false;
-        char moveColumn = 'A';
-        int moveRow = 1;
-
-        while (!correct) {
-            String move = scanner.nextLine();
-            moveColumn = move.charAt(0);
-            moveRow = (int) move.charAt(1) - 48;
-
-            // TODO check validation of input
-            correct = true;
-        }
-
-        // TODO check if move exist and can be executed
-
-        this.saveMove(moveColumn, moveRow, player);
+        Move move = player.getMove();
+        this.saveMove(move.getColumn(), move.getRow(), player);
     }
 
     private int readSize() {
