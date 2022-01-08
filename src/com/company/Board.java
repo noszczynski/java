@@ -2,6 +2,7 @@ package com.company;
 
 public class Board {
     int rows, cols, movesToWin;
+    char[] alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
     public Board(int rows, int cols, int movesToWin) {
         this.rows = rows;
@@ -18,14 +19,14 @@ public class Board {
     }
 
     public void writeSchema(int[][] schema, Player[] players) {
-        System.out.println(this.rows + ":" + this.cols);
+//        System.out.println(this.rows + ":" + this.cols);
         for (int i = 0; i < this.rows + 1; i++) {
             if (i == 0) {
                 for (int j = 0; j < this.cols + 1; j++) {
                     if (j == 0) {
-                        System.out.print("[-]");
+                        System.out.print("[\\]");
                     } else {
-                        System.out.print("[" + new String(new char[]{65}) + "]");
+                        System.out.print("[" + alphabet[j - 1] + "]");
                     }
                 }
             } else {
@@ -39,5 +40,13 @@ public class Board {
 
             System.out.println();
         }
+    }
+
+    public int getRows() {
+        return this.rows;
+    }
+
+    public int getColumns() {
+        return this.cols;
     }
 }

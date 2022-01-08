@@ -4,12 +4,13 @@ import java.util.Scanner;
 
 public class Game {
     Board board;
-    Player[] players = {null, null}; // winner, player1, player2
-    int[][] game;
+    Player[] players = {null, null, null}; // winner, player1, player2
+    int[][] moves;
+    int turn = 1, movesToWin = 3;
 
     public Game(Player player1, Player player2) {
-        this.players[0] = player1;
-        this.players[1] = player2;
+        this.players[player1.getId()] = player1;
+        this.players[player2.getId()] = player2;
     }
 
     public void fillFields() {
@@ -21,11 +22,11 @@ public class Game {
             }
         }
 
-        this.game = arr;
+        this.moves = arr;
     }
 
     public void getStatus() {
-        for (int[] row : this.game) {
+        for (int[] row : this.moves) {
             for (int field : row) {
                 System.out.print(field);
             }
@@ -33,8 +34,43 @@ public class Game {
         }
     }
 
-    public void getMove(Player player) {
+    private void refresh() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
+    }
 
+    public void saveMove(char column, int row, Player player) {
+        int actualRow = row - 1;
+        int actualColumn = (int) column - 65;
+
+        int[][] newMoves = moves;
+        newMoves[actualRow][actualColumn] = player.getId();
+
+        this.refresh();
+        this.board.writeSchema(newMoves, players);
+
+        turn++;
+    }
+
+    public void getMove(Player player) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Ruch gracza " + player.getName() + ": ");
+        boolean correct = false;
+        char moveColumn = 'A';
+        int moveRow = 1;
+
+        while (!correct) {
+            String move = scanner.nextLine();
+            moveColumn = move.charAt(0);
+            moveRow = (int) move.charAt(1) - 48;
+
+            // TODO check validation of input
+            correct = true;
+        }
+
+        // TODO check if move exist and can be executed
+
+        this.saveMove(moveColumn, moveRow, player);
     }
 
     private int readSize() {
@@ -49,19 +85,141 @@ public class Game {
         return scanner.nextInt();
     }
 
+    private boolean checkHorizontal(Player player) {
+        int id = player.getId();
+
+        for (int row = 0; row < board.getColumns(); row++) {
+            int missingMovesToWin = this.movesToWin;
+
+            for (int column = 0; column < board.getRows(); column++) {
+                int fieldValue = moves[row][column];
+
+                if (fieldValue == id) {
+                    missingMovesToWin--;
+                }
+            }
+
+            if (missingMovesToWin == 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkVertical(Player player) {
+        int id = player.getId();
+
+        for (int column = 0; column < board.getColumns(); column++) {
+            int missingMovesToWin = this.movesToWin;
+
+            for (int row = 0; row < board.getRows(); row++) {
+                int fieldValue = moves[row][column];
+
+                if (fieldValue == id) {
+                    missingMovesToWin--;
+                }
+            }
+
+            if (missingMovesToWin == 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkDiagonally(Player player) {
+        int id = player.getId();
+        int column = 0, row = 0;
+        int columns = board.getColumns();
+        int rows = board.getRows();
+        int missingMovesToWin = this.movesToWin;
+
+        // direction: ⬊
+        while (column + movesToWin <= columns || row + movesToWin <= rows) {
+//            System.out.println("checkDiagonally (to bottom right) - " + column + ":" + row);
+
+            for (int i = row, j = column, move = 1; move <= movesToWin; i++, j++, move++) {
+                if (moves[i][j] == id) {
+                    missingMovesToWin--;
+                }
+            }
+
+            column++;
+            row++;
+        }
+
+        if (missingMovesToWin == 0) {
+            return true;
+        }
+
+        // direction: ⬋
+        missingMovesToWin = this.movesToWin;
+        column = columns - 1;
+        row = rows - 1;
+
+        while (column - movesToWin >= 0 || row + movesToWin <= rows) {
+//            System.out.println("checkDiagonally (to bottom left) - " + column + ":" + row);
+
+            for (int i = row, j = column, move = 1; move <= movesToWin; i++, j--, move++) {
+                if (moves[i][j] == id) {
+                    missingMovesToWin--;
+                }
+            }
+
+            column--;
+            row++;
+        }
+
+        return missingMovesToWin == 0;
+    }
+
+    private boolean checkWinner(Player[] players) {
+        // limit for two players
+        for (int i = 1; i <= 2; i++) {
+            Player currentPlayer = players[i];
+            boolean isPlayerWon = this.checkHorizontal(currentPlayer) || this.checkVertical(currentPlayer) || this.checkDiagonally(currentPlayer);
+
+            if (isPlayerWon) {
+                players[0] = currentPlayer;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void start() {
 //        int size = this.readSize();
 //        int movesToWin = this.readMovesToWin();
-        int size = 5, movesToWin = 3;
+        int size = 3, movesToWinMOCK = 3;
 
-        this.board = new Board(size, size, movesToWin);
+        this.movesToWin = movesToWinMOCK;
+        this.board = new Board(size, size, movesToWinMOCK);
 
-        int[][] game = new int[size][size];
-        this.game = game;
+        int[][] moves = new int[size][size];
+        this.moves = moves;
 
-        this.board.writeSchema(game, players);
-
+        this.board.writeSchema(moves, players);
 
         this.fillFields();
+
+        // player[0] is winner
+        while (players[0] == null) {
+            for (int i = 1; i <= 2; i++) {
+                this.getMove(players[i]);
+
+                if (this.checkWinner(players)) {
+                   break;
+                }
+            }
+        }
+
+        this.finish();
+    }
+
+    private void finish() {
+        System.out.println("The winner is \"" + players[0].getName() + "\" [" + players[0].getSign() + "]");
     }
 }

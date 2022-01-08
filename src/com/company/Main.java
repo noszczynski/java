@@ -4,13 +4,14 @@ public class Main {
 
     public static void main(String[] args) {
         try {
-            Player player1 = new Player(1, 'x');
-            Player player2 = new Player(2, 'o'); // computer
+            // TODO remove id from constructor - may causing errors
+            Player player1 = new Player(1, "Gracz", 'x');
+            Player player2 = new Player(2, "Komputer", 'o');
 
             Game game = new Game(player1, player2);
 
             game.start();
-            game.getStatus();
+//            game.getStatus();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
