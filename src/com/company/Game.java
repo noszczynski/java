@@ -39,12 +39,9 @@ public class Game {
         System.out.flush();
     }
 
-    public void saveMove(char column, int row, Player player) {
-        int actualRow = row - 1;
-        int actualColumn = (int) column - 65;
-
+    public void saveMove(int column, int row, Player player) {
         int[][] newMoves = moves;
-        newMoves[actualRow][actualColumn] = player.getId();
+        newMoves[row][column] = player.getId();
 
         this.refresh();
         this.board.writeSchema(newMoves, players);
@@ -52,8 +49,24 @@ public class Game {
         turn++;
     }
 
-    public void getMove(Player player) {
-        Move move = player.getMove();
+    public void makeMove(Player player) {
+        Move move = null;
+        boolean correct = false;
+
+        while (!correct) {
+            move = player.getMove(moves, board.getColumns(), board.getRows());
+
+            if (move.isOk()) {
+                System.out.println("Nieprawidłowy ruch!");
+
+                if (!(player instanceof ComputerPlayer)) {
+                    System.out.println("Nie jesteś komputerem!");
+                }
+            } else {
+                correct = true;
+            }
+        }
+
         this.saveMove(move.getColumn(), move.getRow(), player);
     }
 
@@ -192,7 +205,7 @@ public class Game {
         // player[0] is winner
         while (players[0] == null) {
             for (int i = 1; i <= 2; i++) {
-                this.getMove(players[i]);
+                this.makeMove(players[i]);
 
                 if (this.checkWinner(players)) {
                    break;
