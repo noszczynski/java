@@ -4,14 +4,16 @@ import java.util.Scanner;
 
 public class Model {
 
+    private static final int DEFAULT_MIN_WIDTH = 3;
+    private static final int DEFAULT_MAX_WIDTH = 10;
     private static final int DEFAULT_WIDTH = 3;
 
     /* Mark (represents X, O, or an empty square */
 
     public enum Mark {
 
-        X("X"),
-        O("O"),
+        Player("X"),
+        Computer("O"),
         EMPTY(" ");
 
         private final String message;
@@ -34,8 +36,8 @@ public class Model {
 
     public enum Result {
 
-        X("\nX"),
-        O("\nO"),
+        Player("\nX"),
+        Computer("\nO"),
         TIE("\nTie"),
         NONE("\nnone");
 
@@ -49,21 +51,19 @@ public class Model {
         public String toString() {
             return message;
         }
-
     }
 
     private final Mark[][] grid;    /* Game grid */
-    private boolean xTurn;          /* True if X is current player */
+    private boolean isPlayerTurn;   /* True if Player is current player */
     private final int width;        /* Size of game grid */
 
     public Model() {
 
-        /* Initialize width; X goes first */
-
+        /* Initialize width; Player (X) goes first */
         int width = getBoardWidth();
 
         this.width = width;
-        xTurn = true;
+        isPlayerTurn = true;
 
         /* Create grid (width x width) as a 2D Mark array */
         grid = new Mark[width][width];
@@ -81,12 +81,13 @@ public class Model {
         Scanner scanner = new Scanner(System.in);
         int width = DEFAULT_WIDTH;
 
-        width = scanner.nextInt();
+        // TODO uncomment on end of work
+//        width = scanner.nextInt();
 
-        while (width < 3 || width > 10) {
-            System.out.println("Pole musi być między 3 a 10");
-            width = scanner.nextInt();
-        }
+//        while (width < DEFAULT_MIN_WIDTH || width > DEFAULT_MAX_WIDTH) {
+//            System.out.println("Minimal width is " + DEFAULT_MIN_WIDTH + ", but maximal is " + DEFAULT_MAX_WIDTH);
+//            width = scanner.nextInt();
+//        }
 
         return width;
     }
@@ -100,12 +101,12 @@ public class Model {
          */
 
         if (isValidSquare(row, col) && (!isSquareMarked(row, col))) {
-            if (xTurn) {
-                grid[row][col] = Mark.X;
-                xTurn = false;
+            if (isPlayerTurn) {
+                grid[row][col] = Mark.Player;
+                isPlayerTurn = false;
             } else {
-                grid[row][col] = Mark.O;
-                xTurn = true;
+                grid[row][col] = Mark.Computer;
+                isPlayerTurn = true;
             }
         }
     }
@@ -127,7 +128,6 @@ public class Model {
 
     public Mark getMark(int row, int col) {
 
-        System.out.println(row + ":" + col);
         /* Return mark from the square at the specified location */
         return grid[row][col];
     }
@@ -140,10 +140,10 @@ public class Model {
             value
         */
 
-        if (isMarkWin(Mark.X)) {
-            return Result.X;
-        } else if (isMarkWin(Mark.O)) {
-            return Result.O;
+        if (isMarkWin(Mark.Player)) {
+            return Result.Player;
+        } else if (isMarkWin(Mark.Computer)) {
+            return Result.Computer;
         } else if (isTie()) {
             return Result.TIE;
         } else {
@@ -250,15 +250,15 @@ public class Model {
             }
         }
 
-        return !isMarkWin(Mark.X) && !isMarkWin(Mark.O);
+        return !isMarkWin(Mark.Player) && !isMarkWin(Mark.Computer);
     }
 
     public boolean isGameOver() {
         return Result.NONE != getResult();
     }
 
-    public boolean isXTurn() {
-        return xTurn;
+    public boolean isPlayerTurn() {
+        return isPlayerTurn;
     }
 
     public int getWidth() {

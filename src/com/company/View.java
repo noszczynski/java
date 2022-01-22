@@ -10,33 +10,36 @@ import javax.swing.border.LineBorder;
 
 
 public class View extends JPanel implements ActionListener {
-    private Model model;
-    private JButton[][] squares;
+    private final Model model;
     public JLabel resultLabel = new JLabel("Result");
 
     public View(Model model) {
 
         this.model = model;
+        int modelWidth = this.model.getWidth();
 
-        JPanel squaresPanel = new JPanel(new GridLayout(model.getWidth() + 1, model.getWidth() + 1));
+        JPanel squaresPanel = new JPanel(new GridLayout(modelWidth + 1, modelWidth + 1));
 
-        this.squares = new JButton[model.getWidth()][model.getWidth()];
+        JButton[][] squares = new JButton[modelWidth][modelWidth];
 
         // loop through every row and col
-        for (int row = 0; row < model.getWidth(); row++) {
-            for (int col = 0; col < model.getWidth(); col++) {
-                squares[row][col] = new JButton();
-                squares[row][col].setBorder(new LineBorder(Color.BLACK));
-                squares[row][col].setPreferredSize(new Dimension(124, 124));
-                squares[row][col].addActionListener(this);
-                squares[row][col].setName("Square" + row + col);
+        for (int row = 0; row < modelWidth; row++) {
+            for (int col = 0; col < modelWidth; col++) {
+
+                JButton button = new JButton();
+                button.setBorder(new LineBorder(Color.BLACK));
+                button.setPreferredSize(new Dimension(124, 124));
+                button.addActionListener(this);
+                button.setName("Square" + row + col);
+
+                squares[row][col] = button;
 
                 //testing the creation of buttons
-                System.out.println("Created Square [" + row + ":" + col + "]");
+//                System.out.println("Created Square [" + row + ":" + col + "]");
 
                 //finish initializing JButton; add to JPanel
                 squaresPanel.add(squares[row][col]);
-                System.out.println("Square [" + row + ":" + col + "] has been added to the panel.");
+//                System.out.println("Square [" + row + ":" + col + "] has been added to the panel.");
             }
         }
 
@@ -58,12 +61,6 @@ public class View extends JPanel implements ActionListener {
 //        }
 //    }
 
-//    public void showInputError() {
-//
-//        /* Display an error if input is invalid (see examples) */
-//        System.out.println("Error: incorrect input");
-//    }
-
     public void showResult(String r) {
 
         /* Display the final winner */
@@ -72,25 +69,19 @@ public class View extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        JButton btn = (JButton) e.getSource();
+        JButton clickedBtn = (JButton) e.getSource();
 
-        int row = (int) (btn.getName().charAt(6)) - 48;
-        int col = (int) (btn.getName().charAt(7)) - 48;
+        System.out.println(clickedBtn);
 
-        System.out.println(row + " " + col);
-        if (model.isXTurn()) {
-            model.makeMark(row, col);
-            btn.setText(model.getMark(row, col).toString());
-        } else {
-            model.makeMark(row, col);
-            btn.setText(model.getMark(row, col).toString());
-        }
+        int row = (int) (clickedBtn.getName().charAt(6)) - 48;
+        int col = (int) (clickedBtn.getName().charAt(7)) - 48;
+
+        model.makeMark(row, col);
+        clickedBtn.setText(model.getMark(row, col).toString());
 
         if (model.isMarkWin(model.getMark(row, col))) {
-            System.out.println(model.getResult().toString());
             showResult(model.getMark(row, col).toString());
         } else if (model.isTie()) {
-            System.out.println(model.getResult());
             showResult(model.getMark(row, col).toString().toUpperCase().trim());
         }
     }
