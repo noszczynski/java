@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Objects;
 import java.util.Random;
 
 import javax.swing.*;
@@ -13,6 +14,7 @@ public class View extends JPanel implements ActionListener {
     private final Model model;
     private final JButton[][] squares;
 
+    private String difficultyLevel;
     public JLabel resultLabel = new JLabel("Result");
 
     public View(Model model) {
@@ -91,19 +93,23 @@ public class View extends JPanel implements ActionListener {
 
     private void makeComputerMove() {
 
-        Random rand = new Random();
+        AIPlayer aiPlayer;
 
-        int row = 0, column = 0;
-        boolean isCorrect = false;
+        if (Objects.equals(difficultyLevel, "Easy")) {
 
-        while (!isCorrect) {
-            row = rand.nextInt(model.getWidth());
-            column = rand.nextInt(model.getWidth());
+            aiPlayer = new AIPlayerEasy(model);
+        } else if (Objects.equals(difficultyLevel, "Hard")) {
 
-            isCorrect = model.isMarkEmpty(row, column);
+            aiPlayer = new AIPlayerHard(model);
+        } else {
+
+            //TODO create normal difficulty
+            aiPlayer = new AIPlayerEasy(model);
         }
 
-        checkResult(squares[row][column]);
+        int[] move = aiPlayer.makeMove();
+
+        checkResult(squares[move[0]][move[1]]);
     }
 
     @Override
