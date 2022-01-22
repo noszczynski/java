@@ -33,11 +33,11 @@ public class View extends JPanel implements ActionListener {
                 squares[row][col].setName("Square" + row + col);
 
                 //testing the creation of buttons
-                System.out.println("Created Square" + row + col);
+                System.out.println("Created Square [" + row + ":" + col + "]");
 
                 //finish initializing JButton; add to JPanel
                 squaresPanel.add(squares[row][col]);
-                System.out.println("Square" + row + col + " has been added to the panel.");
+                System.out.println("Square [" + row + ":" + col + "] has been added to the panel.");
             }
         }
 
