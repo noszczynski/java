@@ -67,12 +67,7 @@ public class View extends JPanel implements ActionListener {
         resultLabel.setText(model.getResult().toString().toUpperCase().trim());
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        JButton clickedBtn = (JButton) e.getSource();
-
-        System.out.println(clickedBtn);
-
+    private void makePlayerMove(JButton clickedBtn) {
         int row = (int) (clickedBtn.getName().charAt(6)) - 48;
         int col = (int) (clickedBtn.getName().charAt(7)) - 48;
 
@@ -83,6 +78,19 @@ public class View extends JPanel implements ActionListener {
             showResult(model.getMark(row, col).toString());
         } else if (model.isTie()) {
             showResult(model.getMark(row, col).toString().toUpperCase().trim());
+        }
+    }
+
+    private void makeComputerMove() {
+
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (model.isPlayerTurn()) {
+            makePlayerMove((JButton) e.getSource());
+        } else {
+            makeComputerMove();
         }
     }
 }

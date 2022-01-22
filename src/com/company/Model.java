@@ -81,7 +81,7 @@ public class Model {
         Scanner scanner = new Scanner(System.in);
         int width = DEFAULT_WIDTH;
 
-        // TODO uncomment on end of work
+        //TODO uncomment on end of work
 //        width = scanner.nextInt();
 
 //        while (width < DEFAULT_MIN_WIDTH || width > DEFAULT_MAX_WIDTH) {
