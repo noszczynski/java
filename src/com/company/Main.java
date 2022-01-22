@@ -1,16 +1,29 @@
 package com.company;
 
-public class Main {
+import javax.swing.JFrame;
 
+// TODO przetestować większe pola gry oraz 4 do końca
+// TODO dodać algorytm ruchów komputera
+
+public class Main {
     public static void main(String[] args) {
         try {
-            // TODO remove id from constructor - may causing errors
-            Player player1 = new Player(1, "Gracz", 'x');
-            Player player2 = new ComputerPlayer(2, "Komputer", 'o');
+            /* Create MVC Objects */
+            Model model = new Model();
+            View view = new View(model);
 
-            Game game = new Game(player1, player2);
 
-            game.start();
+            //creating the window
+            JFrame frame = new JFrame("Tic Tac Toe by Adam Noszczyński");
+
+            int boardWidth = model.getWidth();
+            frame.setSize(boardWidth * 200, boardWidth * 200);
+            frame.add(view);
+
+            frame.setVisible(true);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.pack();
+
         } catch (Exception ex) {
             ex.printStackTrace();
         }
