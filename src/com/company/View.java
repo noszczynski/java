@@ -11,9 +11,8 @@ import javax.swing.border.LineBorder;
 
 //                squares[row][col].setName("Square [" + row + ":" + col + "]");
 public class View extends JPanel implements ActionListener {
-
-    private final Model model;
-
+    private Model model;
+    private JButton[][] squares;
     public JLabel resultLabel = new JLabel("Result");
 
     public View(Model model) {
@@ -22,21 +21,23 @@ public class View extends JPanel implements ActionListener {
 
         JPanel squaresPanel = new JPanel(new GridLayout(model.getWidth() + 1, model.getWidth() + 1));
 
-        JButton[][] squares = new JButton[model.getWidth()][model.getWidth()];
+        this.squares = new JButton[model.getWidth()][model.getWidth()];
 
-        // loop through every row and column
+        // loop through every row and col
         for (int row = 0; row < model.getWidth(); row++) {
             for (int col = 0; col < model.getWidth(); col++) {
                 squares[row][col] = new JButton();
                 squares[row][col].setBorder(new LineBorder(Color.BLACK));
                 squares[row][col].setPreferredSize(new Dimension(124, 124));
                 squares[row][col].addActionListener(this);
+                squares[row][col].setName("Square" + row + col);
 
                 //testing the creation of buttons
-                System.out.println("Created Square [" + row + ":" + col + "]");
+                System.out.println("Created Square" + row + col);
 
+                //finish initializing JButton; add to JPanel
                 squaresPanel.add(squares[row][col]);
-                System.out.println("Square [" + row + ":" + col + "] has been added to the panel.");
+                System.out.println("Square" + row + col + " has been added to the panel.");
             }
         }
 
@@ -46,8 +47,6 @@ public class View extends JPanel implements ActionListener {
 
         //add squarePanel to view panel
         add(squaresPanel);
-
-
     }
 
     public void showNextMovePrompt() {
@@ -68,13 +67,14 @@ public class View extends JPanel implements ActionListener {
 
     public void showResult(String r) {
 
-        /* Display final winner */
+        /* Display the final winner */
         resultLabel.setText(model.getResult().toString().toUpperCase().trim());
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         JButton btn = (JButton) e.getSource();
+
         int row = (int) (btn.getName().charAt(6)) - 48;
         int col = (int) (btn.getName().charAt(7)) - 48;
 
