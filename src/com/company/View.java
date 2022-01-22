@@ -9,7 +9,6 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 
-//                squares[row][col].setName("Square [" + row + ":" + col + "]");
 public class View extends JPanel implements ActionListener {
     private Model model;
     private JButton[][] squares;
@@ -49,21 +48,21 @@ public class View extends JPanel implements ActionListener {
         add(squaresPanel);
     }
 
-    public void showNextMovePrompt() {
+//    public void showNextMovePrompt() {
+//
+//        /* Display a prompt for the player's next move (see examples) */
+//        if (model.isXTurn()) {
+//            System.out.print("\nPlayer 1 (X) move: \nEnter the row and column numbers, separated by a space: ");
+//        } else {
+//            System.out.print("\nPlayer 2 (O) move: \nEnter the row and column numbers, separated by a space: ");
+//        }
+//    }
 
-        /* Display a prompt for the player's next move (see examples) */
-        if (model.isXTurn()) {
-            System.out.print("\nPlayer 1 (X) move: \nEnter the row and column numbers, separated by a space: ");
-        } else {
-            System.out.print("\nPlayer 2 (O) move: \nEnter the row and column numbers, separated by a space: ");
-        }
-    }
-
-    public void showInputError() {
-
-        /* Display an error if input is invalid (see examples) */
-        System.out.println("Error: incorrect input");
-    }
+//    public void showInputError() {
+//
+//        /* Display an error if input is invalid (see examples) */
+//        System.out.println("Error: incorrect input");
+//    }
 
     public void showResult(String r) {
 

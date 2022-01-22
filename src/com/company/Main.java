@@ -6,6 +6,9 @@ import javax.swing.JFrame;
 // TODO dodać algorytm ruchów komputera
 
 public class Main {
+    private static final String GAME_NAME = "Tic Tac Toe";
+    private static final String AUTHOR = "Adam Noszczyński";
+
     public static void main(String[] args) {
         try {
             /* Create MVC Objects */
@@ -13,8 +16,8 @@ public class Main {
             View view = new View(model);
 
 
-            //creating the window
-            JFrame frame = new JFrame("Tic Tac Toe by Adam Noszczyński");
+            /* Create the window */
+            JFrame frame = new JFrame(GAME_NAME + " by " + AUTHOR);
 
             int boardWidth = model.getWidth();
             frame.setSize(boardWidth * 200, boardWidth * 200);

@@ -27,8 +27,10 @@ public class Model {
 
     }
 
-    /* Result (represents the final state of the game: X wins, O wins, a tie,
-       or NONE if the game is not yet over) */
+    /*
+        Result (represents the final state of the game: X wins, O wins, a tie,
+        or NONE if the game is not yet over)
+   */
 
     public enum Result {
 
@@ -50,9 +52,9 @@ public class Model {
 
     }
 
-    private final Mark[][] grid; /* Game grid */
-    private boolean xTurn; /* True if X is current player */
-    private final int width;     /* Size of game grid */
+    private final Mark[][] grid;    /* Game grid */
+    private boolean xTurn;          /* True if X is current player */
+    private final int width;        /* Size of game grid */
 
     public Model() {
 
@@ -90,20 +92,20 @@ public class Model {
     }
 
     public void makeMark(int row, int col) {
-        
-        /* Place the current player's mark in the square at the specified
-           location, but only if the location is valid and if the square is
-           empty! */
+
+         /*
+            Place the current player's mark in the square at the specified
+            location, but only if the location is valid and if the square is
+            empty!
+         */
 
         if (isValidSquare(row, col) && (!isSquareMarked(row, col))) {
             if (xTurn) {
                 grid[row][col] = Mark.X;
                 xTurn = false;
-//					return true;
             } else {
                 grid[row][col] = Mark.O;
                 xTurn = true;
-//					return true;
             }
         }
     }
@@ -111,11 +113,10 @@ public class Model {
     public boolean isValidSquare(int row, int col) {
 
         /* Return true if specified location is within grid bounds */
-        if (row >= 0 && row <= width - 1 && col >= 0 && col <= width - 1 && !isSquareMarked(row, col)) {
-            return true;
-        } else {
-            return false;
-        }
+        boolean ifRow = row >= 0 && row <= width - 1;
+        boolean ifCol = col >= 0 && col <= width - 1;
+
+        return ifRow && ifCol && !isSquareMarked(row, col);
     }
 
     public boolean isSquareMarked(int row, int col) {
@@ -126,17 +127,18 @@ public class Model {
 
     public Mark getMark(int row, int col) {
 
-        System.out.println(row +":"+ col);
+        System.out.println(row + ":" + col);
         /* Return mark from the square at the specified location */
         return grid[row][col];
-
     }
 
     public Result getResult() {
         
-        /* Use isMarkWin() to see if X or O is the winner, if the game is a
-           tie, or if the game is not over, and return the corresponding Result
-           value */
+        /*
+            Use isMarkWin() to see if X or O is the winner, if the game is a
+            tie, or if the game is not over, and return the corresponding Result
+            value
+        */
 
         if (isMarkWin(Mark.X)) {
             return Result.X;
@@ -147,90 +149,99 @@ public class Model {
         } else {
             return Result.NONE;
         }
+    }
 
+    private boolean checkWinHorizontal(Mark mark) {
+        int marksPerRow = 0;
+
+        for (int row = 0; row < width; row++) {
+            for (int col = 0; col < width; col++) {
+                if (getMark(row, col) == mark) {
+                    marksPerRow++;
+                } else {
+                    marksPerRow = 0;
+                }
+                if (marksPerRow == (width)) {
+                    return true;
+                }
+            }
+            marksPerRow = 0;
+        }
+
+        return false;
+    }
+
+    private boolean checkWinVertical(Mark mark) {
+        int marksPerRow = 0;
+
+        for (int col = 0; col < width; col++) {
+            for (int row = 0; row < width; row++) {
+                if (getMark(row, col) == mark) {
+                    marksPerRow++;
+                } else {
+                    marksPerRow = 0;
+                }
+                if (marksPerRow == (width)) {
+                    return true;
+                }
+            }
+            marksPerRow = 0;
+        }
+
+        return false;
+    }
+
+    private boolean checkWinDiagonalFromTopLeftToBottomRight(Mark mark) {
+        int marksPerRow = 0;
+
+        for (int row = 0; row < width; row++) {
+            if (getMark(row, row) == mark) {
+                marksPerRow++;
+            } else {
+                marksPerRow = 0;
+            }
+            if (marksPerRow == (width)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean checkWinDiagonalFromBottomLeftToTopRight(Mark mark) {
+        int marksPerRow = 0;
+
+        for (int i = 0; i < width; i++) {
+            if (getMark(i, width - 1 - i) == mark) {
+                marksPerRow++;
+            } else {
+                marksPerRow = 0;
+            }
+            if (marksPerRow == (width)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     protected boolean isMarkWin(Mark mark) {
         
-        /* Check the squares of the board to see if the specified mark is the
-           winner */
+        /*
+            Check the squares of the board to see if the specified mark is the
+            winner
+        */
+        boolean isWinHorizontal = checkWinHorizontal(mark);
+        boolean isWinVertical = checkWinVertical(mark);
+        boolean isWinDiagonalFromTopLeftToBottomRight = checkWinDiagonalFromTopLeftToBottomRight(mark);
+        boolean isWinDiagonalFromBottomLeftToTopRight = checkWinDiagonalFromBottomLeftToTopRight(mark);
 
-        int countMarks = 0;
-        //check win horizontal
-        for (int row = 0; row < width; row++) {
-            for (int col = 0; col < width; col++) {
-                if (getMark(row, col) == mark) {
-                    countMarks++;
-                } else {
-                    countMarks = 0;
-                }
-                if (countMarks == (width)) {
-                    return true;
-                }
-            }
-            countMarks = 0;
-        }
-        countMarks = 0;
-        //check win vertical
-        for (int col = 0; col < width; col++) {
-            for (int row = 0; row < width; row++) {
-                if (getMark(row, col) == mark) {
-                    countMarks++;
-                } else {
-                    countMarks = 0;
-                }
-                if (countMarks == (width)) {
-                    return true;
-                }
-            }
-            countMarks = 0;
-        }
-        countMarks = 0;
-        //check diagonal from top left to bottom right
-        for (int row = 0; row < width; row++) {
-            if (getMark(row, row) == mark) {
-                countMarks++;
-            } else {
-                countMarks = 0;
-            }
-            if (countMarks == (width)) {
-                return true;
-            }
-        }
-        countMarks = 0;
-
-        //check diagonal from bottom left to top right
-        for (int i = 0; i < width; i++) {
-            if (getMark(i, width - 1 - i) == mark) {
-                countMarks++;
-            } else {
-                countMarks = 0;
-            }
-            if (countMarks == (width)) {
-                return true;
-            }
-        }
-		/*
-        for(int col = (width-1); col >=0; col--){
-            int row = 0;
-			if(getMark(row, col) == mark){
-				countMarks++;
-			}
-			if(countMarks == width){
-				return true;
-			}
-			row++;
-			
-        }
-		*/
-        countMarks = 0;
-        return false;
+        return isWinHorizontal || isWinVertical || isWinDiagonalFromTopLeftToBottomRight || isWinDiagonalFromBottomLeftToTopRight;
     }
 
     protected boolean isTie() {
 
         /* Check the squares of the board to see if the game is a tie */
-
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < width; j++) {
                 if (getMark(i, j) == Mark.EMPTY) {
@@ -238,31 +249,20 @@ public class Model {
                 }
             }
         }
-        if (isMarkWin(Mark.X) || isMarkWin(Mark.O)) {
-            return false;
-        } else {
-            return true;
-        }
+
+        return !isMarkWin(Mark.X) && !isMarkWin(Mark.O);
     }
 
-    public boolean isGameover() {
+    public boolean isGameOver() {
         return Result.NONE != getResult();
     }
 
     public boolean isXTurn() {
-
-        /* Getter for xTurn */
-
         return xTurn;
-
     }
 
     public int getWidth() {
-
-        /* Getter for width */
-
         return width;
-
     }
 
 }
