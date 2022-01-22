@@ -11,8 +11,9 @@ import javax.swing.border.LineBorder;
 
 public class View extends JPanel implements ActionListener {
     private final Model model;
-    public JLabel resultLabel = new JLabel("Result");
     private final JButton[][] squares;
+
+    public JLabel resultLabel = new JLabel("Result");
 
     public View(Model model) {
 
@@ -48,7 +49,7 @@ public class View extends JPanel implements ActionListener {
         resultLabel.setFont(new Font("Courier New", Font.PLAIN, 48));
         squaresPanel.add(resultLabel);
 
-        //add squarePanel to view panel
+        /* add squarePanel to view panel */
         add(squaresPanel);
     }
 
@@ -68,11 +69,8 @@ public class View extends JPanel implements ActionListener {
         resultLabel.setText(model.getResult().toString().toUpperCase().trim());
     }
 
-    private void makeMark(int row, int column) {
-
-    }
-
     private void checkResult(JButton clickedBtn) {
+
         int row = (int) (clickedBtn.getName().charAt(6)) - 48;
         int column = (int) (clickedBtn.getName().charAt(7)) - 48;
 
@@ -87,10 +85,12 @@ public class View extends JPanel implements ActionListener {
     }
 
     private void makePlayerMove(JButton clickedBtn) {
+
         checkResult(clickedBtn);
     }
 
     private void makeComputerMove() {
+
         Random rand = new Random();
 
         int row = 0, column = 0;
@@ -108,6 +108,7 @@ public class View extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+
         if (model.isPlayerTurn()) {
             makePlayerMove((JButton) e.getSource());
         } else {
