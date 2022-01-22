@@ -11,15 +11,34 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 public class View extends JPanel implements ActionListener {
+    public enum Difficulty {
+
+        Easy("Easy"),
+        Normal("Normal"),
+        Hard("Hard");
+
+        private final String message;
+
+        private Difficulty(String msg) {
+            message = msg;
+        }
+
+        @Override
+        public String toString() {
+            return message;
+        }
+    }
+
     private final Model model;
     private final JButton[][] squares;
+    private final Difficulty difficulty;
 
-    private String difficultyLevel;
     public JLabel resultLabel = new JLabel("Result");
 
-    public View(Model model) {
+    public View(Model model, Difficulty difficulty) {
 
         this.model = model;
+        this.difficulty = difficulty;
         int modelWidth = this.model.getWidth();
 
         JPanel squaresPanel = new JPanel(new GridLayout(modelWidth + 1, modelWidth + 1));
@@ -95,18 +114,19 @@ public class View extends JPanel implements ActionListener {
 
         AIPlayer aiPlayer;
 
-        if (Objects.equals(difficultyLevel, "Easy")) {
-
-            aiPlayer = new AIPlayerEasy(model);
-        } else if (Objects.equals(difficultyLevel, "Hard")) {
-
-            aiPlayer = new AIPlayerHard(model);
-        } else {
-
-            //TODO create normal difficulty
-            aiPlayer = new AIPlayerEasy(model);
+        switch (difficulty) {
+            case Normal:
+                aiPlayer = new AIPlayerEasy(model);
+                break;
+            case Hard:
+                aiPlayer = new AIPlayerHard(model);
+                break;
+            default:
+                aiPlayer = new AIPlayerEasy(model);
+                break;
         }
 
+        System.out.println("You choose difficulty level: " + difficulty);
         int[] move = aiPlayer.makeMove();
 
         checkResult(squares[move[0]][move[1]]);

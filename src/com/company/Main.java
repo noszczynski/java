@@ -21,7 +21,7 @@ public class Main {
         try {
             /* Create game objects */
             Model model = new Model();
-            View view = new View(model);
+            View view = new View(model, View.Difficulty.Hard);
 
 
             /* Create the frame */

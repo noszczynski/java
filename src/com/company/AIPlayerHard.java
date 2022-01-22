@@ -14,7 +14,7 @@ public class AIPlayerHard implements AIPlayer {
     }
 
     private List<int[]> generateMoves() {
-        List<int[]> list = Collections.emptyList();
+        List<int[]> list = new java.util.ArrayList<int[]>(Collections.emptyList());
 
         for (int row = 0; row < model.getWidth(); row++) {
             for (int column = 0; column < model.getWidth(); column++) {
@@ -25,8 +25,11 @@ public class AIPlayerHard implements AIPlayer {
             }
         }
 
-        System.out.println(list);
+        for (int[] move : list) {
+            System.out.println(Arrays.toString(move));
+        }
 
+        System.out.println(" --- ");
         return list;
     }
 
@@ -43,7 +46,7 @@ public class AIPlayerHard implements AIPlayer {
     }
 
     private int evaluate() {
-        return 0;
+        return -1;
     }
 
     /**
@@ -69,29 +72,36 @@ public class AIPlayerHard implements AIPlayer {
             };
         } else {
             for (int[] move : nextMoves) {
-                // try this move for the current "player"
+
+                /* try this move for the current player (Player | Computer) */
                 moves[move[0]][move[1]] = mark;
-                if (mark == Model.Mark.Player) {  // mySeed (computer) is maximizing player
-                    score = minimax(depth - 1, Model.Mark.Computer, alpha, beta)[0];
+                if (mark == Model.Mark.Player) {
+                    score = minimax(depth - 1, Model.Mark.Player, alpha, beta)[0];
                     if (score > alpha) {
                         alpha = score;
                         bestRow = move[0];
                         bestCol = move[1];
                     }
-                } else {  // oppSeed is minimizing player
-                    score = minimax(depth - 1, Model.Mark.Player, alpha, beta)[0];
+                } else {
+                    score = minimax(depth - 1, Model.Mark.Computer, alpha, beta)[0];
                     if (score < beta) {
                         beta = score;
                         bestRow = move[0];
                         bestCol = move[1];
                     }
                 }
-                // undo move
+
+                /* undo move */
                 moves[move[0]][move[1]] = Model.Mark.EMPTY;
-                // cut-off
-                if (alpha >= beta) break;
+
+                /* cut-off */
+                if (alpha >= beta) {
+                    break;
+                }
             }
-            return new int[]{(mark == Model.Mark.Player) ? alpha : beta, bestRow, bestCol};
+            return new int[]{
+                    (mark == Model.Mark.Computer) ? alpha : beta, bestRow, bestCol
+            };
         }
     }
 }
