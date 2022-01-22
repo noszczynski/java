@@ -261,8 +261,16 @@ public class Model {
         return isPlayerTurn;
     }
 
+    public boolean isMarkEmpty(int row, int column) {
+        return grid[row][column] == Mark.EMPTY;
+    }
+
     public int getWidth() {
         return width;
+    }
+
+    public Mark[][] getGrid() {
+        return grid;
     }
 
 }
