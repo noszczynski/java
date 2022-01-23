@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.Arrays;
+
 public class AIPlayerHard implements AIPlayer {
     private static final int MAX_DEPTH = 12;
 
@@ -22,10 +24,10 @@ public class AIPlayerHard implements AIPlayer {
 
                     model.setMark(row, col, Mark.Player); // "X"
                     int moveValue = minimax(
-                        MAX_DEPTH,
-                        Integer.MIN_VALUE,
-                        Integer.MAX_VALUE,
-                        false
+                            MAX_DEPTH,
+                            Integer.MIN_VALUE,
+                            Integer.MAX_VALUE,
+                            false
                     );
                     model.setMark(row, col, Mark.EMPTY); // " "
 
@@ -38,17 +40,111 @@ public class AIPlayerHard implements AIPlayer {
             }
         }
 
-//        System.out.println("bestMove: " + Arrays.toString(bestMove));
+        System.out.println("bestMove: " + Arrays.toString(bestMove));
         return bestMove;
+    }
+
+    /**
+     * Evaluate the given board from the perspective of the X player, return
+     * 10 if a winning board configuration is found, -10 for a losing one and 0
+     * for a draw.
+     *
+     * @return value of the board
+     */
+    private int evaluateBoard() {
+        int rowSum = 0;
+        int bWidth = model.getWidth();
+
+        int playerNumber = 1, aiNumber = -1;
+        int playerWin = playerNumber * bWidth;
+        int aiWin = aiNumber * bWidth;
+
+        // Check rows for winner.
+        for (int row = 0; row < bWidth; row++) {
+            for (int col = 0; col < bWidth; col++) {
+                Mark mark = model.getMark(row, col);
+                if (mark == Mark.Player) rowSum += playerNumber;
+                else if (mark == Mark.Computer) rowSum += aiNumber;
+            }
+
+            if (rowSum == playerWin) {
+                return 10;
+            }
+
+            if (rowSum == aiWin) {
+                return -10;
+            }
+
+            rowSum = 0;
+        }
+
+        // Check columns for winner.
+        rowSum = 0;
+        for (int col = 0; col < bWidth; col++) {
+            for (int row = 0; row < bWidth; row++) {
+                Mark mark = model.getMark(row, col);
+                if (mark == Mark.Player) rowSum += playerNumber;
+                else if (mark == Mark.Computer) rowSum += aiNumber;
+            }
+
+            if (rowSum == playerWin) {
+                return 10;
+            }
+
+            if (rowSum == aiWin) {
+                return -10;
+            }
+
+            rowSum = 0;
+        }
+
+        // Check diagonals for winner.
+        // Top-left to bottom-right diagonal.
+        rowSum = 0;
+        for (int i = 0; i < bWidth; i++) {
+            Mark mark = model.getMark(i, i);
+            if (mark == Mark.Player) rowSum += playerNumber;
+            else if (mark == Mark.Computer) rowSum += aiNumber;
+        }
+
+        if (rowSum == playerWin) {
+            return 10;
+        }
+
+        if (rowSum == aiWin) {
+            return -10;
+        }
+
+        // Top-right to bottom-left diagonal.
+        rowSum = 0;
+        int indexMax = bWidth - 1;
+
+        for (int i = 0; i <= indexMax; i++) {
+            Mark mark = model.getMark(i, indexMax - i);
+            if (mark == Mark.Player) rowSum += playerNumber;
+            else if (mark == Mark.Computer) rowSum += aiNumber;
+        }
+
+        if (rowSum == playerWin) {
+            return 10;
+        }
+
+        if (rowSum == aiWin) {
+            return -10;
+        }
+
+        return 0;
     }
 
     private int minimax(int depth, int alpha, int beta, boolean isMax) {
 
-//        int boardVal = evaluateBoard(board);
+        int boardVal = evaluateBoard();
 
-//        if (Math.abs(boardVal) == 10 || depth == 0 || !board.anyMovesAvailable()) {
-//            return lowestVal;
-//        }
+        if (Math.abs(boardVal) == 10 || depth == 0
+//                || !board.anyMovesAvailable()
+        ) {
+            return boardVal;
+        }
 
         /* Maximising player, find the maximum attainable value. */
         if (isMax) {
