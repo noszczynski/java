@@ -8,50 +8,10 @@ public class Model {
     private static final int DEFAULT_MAX_WIDTH = 10;
     private static final int DEFAULT_WIDTH = 3;
 
-    /* Mark (represents X, O, or an empty square */
-
-    public enum Mark {
-
-        Player("X"),
-        Computer("O"),
-        EMPTY(" ");
-
-        private final String message;
-
-        private Mark(String msg) {
-            message = msg;
-        }
-
-        @Override
-        public String toString() {
-            return message;
-        }
-
-    }
-
     /*
         Result (represents the final state of the game: X wins, O wins, a tie,
         or NONE if the game is not yet over)
    */
-
-    public enum Result {
-
-        Player("\nX"),
-        Computer("\nO"),
-        TIE("\nTie"),
-        NONE("\nnone");
-
-        private final String message;
-
-        private Result(String msg) {
-            message = msg.trim();
-        }
-
-        @Override
-        public String toString() {
-            return message;
-        }
-    }
 
     private final Mark[][] grid;    /* Game grid */
     private boolean isPlayerTurn;   /* True if Player is current player */

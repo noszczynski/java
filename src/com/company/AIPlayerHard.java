@@ -20,14 +20,14 @@ public class AIPlayerHard implements AIPlayer {
 
                 if (model.isMarkEmpty(row, col)) {
 
-                    model.setMark(row, col, Model.Mark.Player); // "X"
+                    model.setMark(row, col, Mark.Player); // "X"
                     int moveValue = minimax(
                         MAX_DEPTH,
                         Integer.MIN_VALUE,
                         Integer.MAX_VALUE,
                         false
                     );
-                    model.setMark(row, col, Model.Mark.EMPTY); // " "
+                    model.setMark(row, col, Mark.EMPTY); // " "
 
                     if (moveValue > bestValue) {
                         bestMove[0] = row;
@@ -44,8 +44,11 @@ public class AIPlayerHard implements AIPlayer {
 
     private int minimax(int depth, int alpha, int beta, boolean isMax) {
 
-        System.out.println("\n--- START ---");
-        System.out.println("depth: " + depth);
+//        int boardVal = evaluateBoard(board);
+
+//        if (Math.abs(boardVal) == 10 || depth == 0 || !board.anyMovesAvailable()) {
+//            return lowestVal;
+//        }
 
         /* Maximising player, find the maximum attainable value. */
         if (isMax) {
@@ -56,7 +59,7 @@ public class AIPlayerHard implements AIPlayer {
 
                     if (model.isMarkEmpty(row, col)) {
 
-                        model.setMark(row, col, Model.Mark.Player); // "X"
+                        model.setMark(row, col, Mark.Player); // "X"
                         highestVal = Math.max(
                                 highestVal,
                                 minimax(
@@ -66,7 +69,7 @@ public class AIPlayerHard implements AIPlayer {
                                         false
                                 )
                         );
-                        model.setMark(row, col, Model.Mark.EMPTY); // " "
+                        model.setMark(row, col, Mark.EMPTY); // " "
                         alpha = Math.max(alpha, highestVal);
 
                         if (alpha >= beta) {
@@ -88,7 +91,7 @@ public class AIPlayerHard implements AIPlayer {
 
                     if (model.isMarkEmpty(row, col)) {
 
-                        model.setMark(row, col, Model.Mark.Computer); // "O"
+                        model.setMark(row, col, Mark.Computer); // "O"
                         lowestVal = Math.min(
                                 lowestVal,
                                 minimax(
@@ -98,7 +101,7 @@ public class AIPlayerHard implements AIPlayer {
                                         true
                                 )
                         );
-                        model.setMark(row, col, Model.Mark.EMPTY); // " "
+                        model.setMark(row, col, Mark.EMPTY); // " "
                         beta = Math.min(beta, lowestVal);
 
                         if (beta <= alpha) {
