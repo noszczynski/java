@@ -112,19 +112,13 @@ public class View extends JPanel implements ActionListener {
 
         AIPlayer aiPlayer;
 
-        switch (difficulty) {
-            case Normal:
-                aiPlayer = new AIPlayerEasy(model);
-                break;
-            case Hard:
-                aiPlayer = new AIPlayerHard(model);
-                break;
-            default:
-                aiPlayer = new AIPlayerEasy(model);
-                break;
+        if (difficulty == Difficulty.Hard) {
+            aiPlayer = new AIPlayerHard(model);
+        } else {
+            aiPlayer = new AIPlayerEasy(model);
         }
 
-        System.out.println("You choose difficulty level: " + difficulty);
+//        System.out.println("You choose difficulty level: " + difficulty);
         int[] move = aiPlayer.makeMove();
 
         checkResult(squares[move[0]][move[1]]);

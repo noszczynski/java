@@ -92,6 +92,10 @@ public class Model {
         return width;
     }
 
+    public void setMark(int row, int column, Mark mark) {
+        grid[row][column] = mark;
+    }
+
     public void makeMark(int row, int col) {
 
          /*
@@ -100,7 +104,7 @@ public class Model {
             empty!
          */
 
-        if (isValidSquare(row, col) && (!isSquareMarked(row, col))) {
+        if (isValidSquare(row, col) && (isMarkEmpty(row, col))) {
             if (isPlayerTurn) {
                 grid[row][col] = Mark.Player;
                 isPlayerTurn = false;
@@ -117,13 +121,7 @@ public class Model {
         boolean ifRow = row >= 0 && row <= width - 1;
         boolean ifCol = col >= 0 && col <= width - 1;
 
-        return ifRow && ifCol && !isSquareMarked(row, col);
-    }
-
-    public boolean isSquareMarked(int row, int col) {
-
-        /* Return true if square at specified location is marked */
-        return getMark(row, col) != Mark.EMPTY;
+        return ifRow && ifCol && isMarkEmpty(row, col);
     }
 
     public Mark getMark(int row, int col) {
@@ -262,7 +260,7 @@ public class Model {
     }
 
     public boolean isMarkEmpty(int row, int column) {
-        return grid[row][column] == Mark.EMPTY;
+        return getMark(row,column) == Mark.EMPTY;
     }
 
     public int getWidth() {
