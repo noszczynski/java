@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Objects;
-import java.util.Random;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;

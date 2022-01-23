@@ -2,8 +2,10 @@ package com.company;
 
 import javax.swing.JFrame;
 
-// TODO przetestować większe pola gry oraz 4 do końca
-// TODO dodać algorytm ruchów komputera
+// TODO działające AI hard
+// TODO blokada po wygranej oraz możliwość resetu oraz wprowadzenia wielkości planszy
+// TODO lepszy UI
+// TODO implementacja algorytmu normal
 
 /**
  * Game created by Adam Noszczyński.
