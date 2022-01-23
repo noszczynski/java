@@ -1,107 +1,110 @@
 package com.company;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public class AIPlayerHard implements AIPlayer {
+    private static final int MAX_DEPTH = 12;
+
     private final Model model;
-    private final Model.Mark[][] moves;
 
     public AIPlayerHard(Model model) {
         this.model = model;
-        this.moves = model.getGrid();
     }
 
-    private List<int[]> generateMoves() {
-        List<int[]> list = new java.util.ArrayList<int[]>(Collections.emptyList());
+//    private List<int[]> generateMoves() {
+//        List<int[]> list = new java.util.ArrayList<int[]>(Collections.emptyList());
+//
+//        for (int row = 0; row < model.getWidth(); row++) {
+//            for (int column = 0; column < model.getWidth(); column++) {
+//                if (model.isMarkEmpty(row, column)) {
+//                    int[] element = {row, column};
+//                    list.add(element);
+//                }
+//            }
+//        }
+//
+//        return list;
+//    }
+
+    /* Get best move for computer. Return int[2] of {row, col} */
+    public int[] makeMove() {
+        int[] bestMove = new int[]{-1, -1};
+        int bestValue = Integer.MIN_VALUE;
 
         for (int row = 0; row < model.getWidth(); row++) {
-            for (int column = 0; column < model.getWidth(); column++) {
-                if (model.isMarkEmpty(row, column)) {
-                    int[] element = {row, column};
-                    list.add(element);
+            for (int col = 0; col < model.getWidth(); col++) {
+                if (model.isMarkEmpty(row, col)) {
+                    model.setMark(row, col, Model.Mark.Player); // "X"
+                    int moveValue = minimax(MAX_DEPTH, Integer.MIN_VALUE,
+                            Integer.MAX_VALUE, false);
+                    model.setMark(row, col, Model.Mark.EMPTY); // " "
+                    if (moveValue > bestValue) {
+                        bestMove[0] = row;
+                        bestMove[1] = col;
+                        bestValue = moveValue;
+                    } else {
+                        System.out.println("Nie znaleziono lepszego ruchu");
+                        System.out.println("moveValue: " + moveValue);
+                        System.out.println("bestValue: " + bestValue);
+                    }
                 }
             }
         }
-
-        for (int[] move : list) {
-            System.out.println(Arrays.toString(move));
-        }
-
-        System.out.println(" --- ");
-        return list;
+        System.out.println("bestMove: " + Arrays.toString(bestMove));
+        return bestMove;
     }
 
-    /* Get next best move for computer. Return int[2] of {row, col} */
-    public int[] makeMove() {
-        /* depth, max-turn, alpha, beta */
-        int[] result = minimax(2, Model.Mark.Player, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    private int minimax(int depth, int alpha, int beta, boolean isMax) {
 
-        /* row, column */
-        return new int[]{
-                result[1],
-                result[2]
-        };
-    }
+        System.out.println("\n--- START ---");
+        System.out.println("depth: " + depth);
 
-    private int evaluate() {
-        return -1;
-    }
+        // Maximising player, find the maximum attainable value.
+        if (isMax) {
+            int highestVal = Integer.MIN_VALUE;
 
-    /**
-     * Minimax (recursive) at level of depth for maximizing or minimizing player
-     * with alpha-beta cut-off. Return int[3] of {score, row, col}
-     */
-    private int[] minimax(int depth, Model.Mark mark, int alpha, int beta) {
-        // Generate possible next moves in a list of int[2] of {row, col}.
-        List<int[]> nextMoves = generateMoves();
+            for (int row = 0; row < model.getWidth(); row++) {
+                for (int col = 0; col < model.getWidth(); col++) {
 
-        // mySeed is maximizing; while oppSeed is minimizing
-        int score;
-        int bestRow = -1;
-        int bestCol = -1;
+                    if (model.isMarkEmpty(row, col)) {
 
-        if (nextMoves.isEmpty() || depth == 0) {
-            // Game over or depth reached, evaluate score
-            score = evaluate();
-            return new int[]{
-                    score,
-                    bestRow,
-                    bestCol
-            };
+                        model.setMark(row, col, Model.Mark.Player); // "X"
+                        highestVal = Math.max(highestVal, minimax(depth - 1, alpha, beta, false));
+                        model.setMark(row, col, Model.Mark.EMPTY); // " "
+                        alpha = Math.max(alpha, highestVal);
+
+                        if (alpha >= beta) {
+                            return highestVal;
+                        }
+                    }
+
+                }
+            }
+
+            return highestVal;
+
+            // Minimising player, find the minimum attainable value;
         } else {
-            for (int[] move : nextMoves) {
+            int lowestVal = Integer.MAX_VALUE;
 
-                /* try this move for the current player (Player | Computer) */
-                moves[move[0]][move[1]] = mark;
-                if (mark == Model.Mark.Player) {
-                    score = minimax(depth - 1, Model.Mark.Player, alpha, beta)[0];
-                    if (score > alpha) {
-                        alpha = score;
-                        bestRow = move[0];
-                        bestCol = move[1];
+            for (int row = 0; row < model.getWidth(); row++) {
+                for (int col = 0; col < model.getWidth(); col++) {
+
+                    if (model.isMarkEmpty(row, col)) {
+
+                        model.setMark(row, col, Model.Mark.Computer); // "O"
+                        lowestVal = Math.min(lowestVal, minimax(depth - 1, alpha, beta, true));
+                        model.setMark(row, col, Model.Mark.EMPTY); // " "
+                        beta = Math.min(beta, lowestVal);
+
+                        if (beta <= alpha) {
+                            return lowestVal;
+                        }
                     }
-                } else {
-                    score = minimax(depth - 1, Model.Mark.Computer, alpha, beta)[0];
-                    if (score < beta) {
-                        beta = score;
-                        bestRow = move[0];
-                        bestCol = move[1];
-                    }
-                }
-
-                /* undo move */
-                moves[move[0]][move[1]] = Model.Mark.EMPTY;
-
-                /* cut-off */
-                if (alpha >= beta) {
-                    break;
                 }
             }
-            return new int[]{
-                    (mark == Model.Mark.Computer) ? alpha : beta, bestRow, bestCol
-            };
+
+            return lowestVal;
         }
     }
 }
