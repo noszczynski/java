@@ -266,9 +266,4 @@ public class Model {
     public int getWidth() {
         return width;
     }
-
-    public Mark[][] getGrid() {
-        return grid;
-    }
-
 }
