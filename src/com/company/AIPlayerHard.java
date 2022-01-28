@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.Arrays;
+import java.lang.*;
 
 import static com.company.Mark.*;
 
@@ -13,17 +14,19 @@ public class AIPlayerHard implements AIPlayer {
     /* Get best move for computer and return int[2] of {row, col} */
     public static int[] makeMove(Model model) {
 
+        System.out.println(" ");
+        System.out.println("Make move!");
+
         int[] bestMove = new int[]{-1, -1};
-        System.out.println("---");
         int bestValue = Integer.MIN_VALUE;
-        System.out.println("---");
 
         for (int row = 0; row < model.getWidth(); row++) {
             for (int col = 0; col < model.getWidth(); col++) {
-
+                System.out.println("\tAnalize: [" + row + "][" + col + "]");
+                System.out.println("\t\tis empty?: " + model.isMarkEmpty(row, col));
                 if (model.isMarkEmpty(row, col)) {
 
-                    model.setMark(row, col, Player); // "X"
+                    model.setMark(row, col, Computer);
                     int moveValue = minimax(
                             model,
                             MAX_DEPTH,
@@ -31,11 +34,11 @@ public class AIPlayerHard implements AIPlayer {
                             Integer.MAX_VALUE,
                             false
                     );
-                    model.setMark(row, col, EMPTY); // " "
-
+                    model.setMark(row, col, EMPTY);
+                    System.out.println("\t\tfield: [" + row + "][" + col + "] is value: " + moveValue);
                     if (moveValue > bestValue) {
-                        System.out.println("row|col: " + row + "|" + col);
-                        System.out.println("moveValue|bestValue: " + moveValue + "|" + bestValue);
+                        System.out.println("\t\trow|col: " + row + "|" + col);
+                        System.out.println("\t\tmoveValue|bestValue: " + moveValue + "|" + bestValue);
                         bestMove[0] = row;
                         bestMove[1] = col;
                         bestValue = moveValue;
@@ -55,14 +58,12 @@ public class AIPlayerHard implements AIPlayer {
      *
      * @return value of the board
      */
-    private static int evaluateModel(Model model) {
+    private static int evaluateModel(Model model, int depth) {
         int rowSum = 0;
         int bWidth = model.getWidth();
 
         int playerWin = Player.getMark() * bWidth;
         int aiWin = Computer.getMark() * bWidth;
-
-//        System.out.println("playerWin|aiWin: " + playerWin + "|" + aiWin);
 
         // Check rows for winner.
         for (int row = 0; row < bWidth; row++) {
@@ -70,12 +71,14 @@ public class AIPlayerHard implements AIPlayer {
                 rowSum += model.getMark(row, col).getMark();
             }
 
-            if (rowSum == playerWin) {
-                return 10;
-            }
+//            System.out.println("\t\t\tRow sum: " + rowSum);
 
             if (rowSum == aiWin) {
-                return -10;
+                return 10 + depth;
+            }
+
+            if (rowSum == playerWin) {
+                return -10 - depth;
             }
 
             rowSum = 0;
@@ -88,12 +91,14 @@ public class AIPlayerHard implements AIPlayer {
                 rowSum += model.getMark(row, col).getMark();
             }
 
-            if (rowSum == playerWin) {
-                return 10;
-            }
+//            System.out.println("\t\t\tRow sum: " + rowSum);
 
             if (rowSum == aiWin) {
-                return -10;
+                return 10 + depth;
+            }
+
+            if (rowSum == playerWin) {
+                return -10 - depth;
             }
 
             rowSum = 0;
@@ -106,12 +111,14 @@ public class AIPlayerHard implements AIPlayer {
             rowSum += model.getMark(i, i).getMark();
         }
 
-        if (rowSum == playerWin) {
-            return 10;
-        }
+//        System.out.println("\t\t\tRow sum: " + rowSum);
 
         if (rowSum == aiWin) {
-            return -10;
+            return 10 + depth;
+        }
+
+        if (rowSum == playerWin) {
+            return -10 - depth;
         }
 
         // Top-right to bottom-left diagonal.
@@ -122,12 +129,14 @@ public class AIPlayerHard implements AIPlayer {
             rowSum += model.getMark(i, indexMax - i).getMark();
         }
 
-        if (rowSum == playerWin) {
-            return 10;
-        }
+//        System.out.println("\t\t\tRow sum: " + rowSum);
 
         if (rowSum == aiWin) {
-            return -10;
+            return 10 + depth;
+        }
+
+        if (rowSum == playerWin) {
+            return -10 - depth;
         }
 
         return 0;
@@ -135,10 +144,11 @@ public class AIPlayerHard implements AIPlayer {
 
     private static int minimax(Model model, int depth, int alpha, int beta, boolean isMax) {
 
-        int boardVal = evaluateModel(model);
-        System.out.println("boardVal: " + boardVal);
+        int boardVal = evaluateModel(model, depth);
 
-        if (Math.abs(boardVal) == 10 || depth == 0 || !model.anyMovesAvailable()) {
+//        System.out.println("\t\t\tboardVal: " + boardVal + ", depth: " + depth);
+
+        if (Math.abs(boardVal) > 0 || depth == 0 || !model.anyMovesAvailable()) {
             return boardVal;
         }
 
@@ -151,7 +161,7 @@ public class AIPlayerHard implements AIPlayer {
 
                     if (model.isMarkEmpty(row, col)) {
 
-                        model.setMark(row, col, Player); // "X"
+                        model.setMark(row, col, Computer);
                         highestVal = Math.max(
                                 highestVal,
                                 minimax(
@@ -162,7 +172,7 @@ public class AIPlayerHard implements AIPlayer {
                                         false
                                 )
                         );
-                        model.setMark(row, col, EMPTY); // " "
+                        model.setMark(row, col, EMPTY);
                         alpha = Math.max(alpha, highestVal);
 
                         if (alpha >= beta) {
@@ -184,7 +194,7 @@ public class AIPlayerHard implements AIPlayer {
 
                     if (model.isMarkEmpty(row, col)) {
 
-                        model.setMark(row, col, Computer); // "O"
+                        model.setMark(row, col, Player);
                         lowestVal = Math.min(
                                 lowestVal,
                                 minimax(
@@ -195,7 +205,7 @@ public class AIPlayerHard implements AIPlayer {
                                         true
                                 )
                         );
-                        model.setMark(row, col, EMPTY); // " "
+                        model.setMark(row, col, EMPTY);
                         beta = Math.min(beta, lowestVal);
 
                         if (beta <= alpha) {

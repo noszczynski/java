@@ -88,13 +88,11 @@ public class View extends JPanel implements ActionListener {
         resultLabel.setText(model.getResult().toString().toUpperCase().trim());
     }
 
-    private void checkResult(JButton clickedBtn) {
-
-        int row = (int) (clickedBtn.getName().charAt(7)) - 48;
-        int column = (int) (clickedBtn.getName().charAt(10)) - 48;
+    private void checkResult(int row, int column) {
 
         model.placeMark(row, column);
-        clickedBtn.setText(model.getMark(row, column).toString());
+        System.out.println(squares[row][column]);
+        squares[row][column].setText(model.getMark(row, column).toString());
 
         if (model.isMarkWin(model.getMark(row, column))) {
             showResult(model.getMark(row, column).toString());
@@ -105,7 +103,11 @@ public class View extends JPanel implements ActionListener {
 
     private void makePlayerMove(JButton clickedBtn) {
 
-        checkResult(clickedBtn);
+        int row = (int) (clickedBtn.getName().charAt(7)) - 48;
+        int column = (int) (clickedBtn.getName().charAt(10)) - 48;
+
+        checkResult(row, column);
+        makeComputerMove();
     }
 
     private void makeComputerMove() {
@@ -118,7 +120,7 @@ public class View extends JPanel implements ActionListener {
             move = AIPlayerEasy.makeMove(model);
         }
 
-        checkResult(squares[move[0]][move[1]]);
+        checkResult(move[0], move[1]);
     }
 
     @Override
@@ -126,8 +128,6 @@ public class View extends JPanel implements ActionListener {
 
         if (model.isPlayerTurn()) {
             makePlayerMove((JButton) e.getSource());
-        } else {
-            makeComputerMove();
         }
     }
 }

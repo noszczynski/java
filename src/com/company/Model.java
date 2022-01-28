@@ -224,6 +224,10 @@ public class Model {
         return isPlayerTurn;
     }
 
+    public int getAvailableMoves() {
+        return availableMoves;
+    }
+
     public boolean anyMovesAvailable() {
         return availableMoves > 0;
     }
