@@ -16,16 +16,17 @@ public class Model {
     private final Mark[][] grid;    /* Game grid */
     private boolean isPlayerTurn;   /* True if Player is current player */
     private final int width;        /* Size of game grid */
-    private int availableMoves;
+    private int availableMoves;     /* Moves to end game */
 
-    public Model() {
+    public Model(View.Difficulty difficulty) {
 
         /* Initialize width; Player (X) goes first */
         int width = getBoardWidth();
         availableMoves = width * width;
 
         this.width = width;
-        isPlayerTurn = true;
+        /* Computer starts only on hard difficulty */
+        isPlayerTurn = difficulty != View.Difficulty.Hard;
 
         /* Create grid (width x width) as a 2D Mark array */
         grid = new Mark[width][width];
@@ -36,7 +37,6 @@ public class Model {
                 grid[i][j] = Mark.EMPTY;
             }
         }
-
     }
 
     private int getBoardWidth() {
@@ -68,6 +68,7 @@ public class Model {
          */
 
         if (isValidSquare(row, col) && (isMarkEmpty(row, col))) {
+            System.out.println("Hejka");
             if (isPlayerTurn) {
                 grid[row][col] = Mark.Player;
                 isPlayerTurn = false;

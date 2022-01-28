@@ -70,6 +70,10 @@ public class View extends JPanel implements ActionListener {
 
         /* add squarePanel to view panel */
         add(squaresPanel);
+
+        if (difficulty == Difficulty.Hard) {
+            makeInitialComputerMove();
+        }
     }
 
 //    public void showNextMovePrompt() {
@@ -93,11 +97,16 @@ public class View extends JPanel implements ActionListener {
         model.placeMark(row, column);
         System.out.println(squares[row][column]);
         squares[row][column].setText(model.getMark(row, column).toString());
+        System.out.println(squares[row][column]);
 
         if (model.isMarkWin(model.getMark(row, column))) {
+            System.out.println("Wygrał: " + model.getMark(row, column));
             showResult(model.getMark(row, column).toString());
         } else if (model.isTie()) {
+            System.out.println("Remis");
             showResult(model.getMark(row, column).toString().toUpperCase().trim());
+        } else {
+            System.out.println("Gramy dalej");
         }
     }
 
@@ -114,19 +123,26 @@ public class View extends JPanel implements ActionListener {
 
         int[] move;
 
-        if (difficulty == Difficulty.Hard) {
-            move = AIPlayerHard.makeMove(model);
-        } else if (difficulty == Difficulty.Normal) {
-            move = AIPlayerNormal.makeMove(model);
-        } else {
+        if (difficulty == Difficulty.Easy) {
             move = AIPlayerEasy.makeMove(model);
+        } else {
+            move = AIPlayerHard.makeMove(model);
         }
 
         checkResult(move[0], move[1]);
     }
 
+    private void makeInitialComputerMove() {
+
+        int[] move = AIPlayerEasy.makeMove(model);
+        checkResult(move[0], move[1]);
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        System.out.println("Log 1");
+        System.out.println(model.isPlayerTurn());
 
         if (model.isPlayerTurn()) {
             makePlayerMove((JButton) e.getSource());

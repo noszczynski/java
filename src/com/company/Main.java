@@ -22,12 +22,13 @@ public class Main {
     public static void main(String[] args) {
         try {
             /* Create game objects */
-            Model model = new Model();
-            View view = new View(model, View.Difficulty.Hard);
+            View.Difficulty difficulty = View.Difficulty.Hard;
+            Model model = new Model(difficulty);
+            View view = new View(model, difficulty);
 
 
             /* Create the frame */
-            JFrame frame = new JFrame(GAME_NAME + " by " + AUTHOR);
+            JFrame frame = new JFrame(GAME_NAME + " by " + AUTHOR + ". Difficulty " + difficulty);
 
             /* Set the frame */
             int boardWidth = model.getWidth();
