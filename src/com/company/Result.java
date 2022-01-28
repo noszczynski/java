@@ -2,10 +2,10 @@ package com.company;
 
 public enum Result {
 
-    Player("\nPlayer [X]"),
-    Computer("\nComputer [O]"),
-    DRAW("\nDraw [X/O]"),
-    NONE("\nNone [-/-]");
+    Player("Player [X]"),
+    Computer("Computer [O]"),
+    DRAW("Draw"),
+    NONE("None");
 
     private final String message;
 

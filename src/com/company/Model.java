@@ -2,6 +2,8 @@ package com.company;
 
 import java.util.Scanner;
 
+import static com.company.Mark.*;
+
 public class Model {
 
     private static final int DEFAULT_MIN_WIDTH = 3;
@@ -9,7 +11,7 @@ public class Model {
     private static final int DEFAULT_WIDTH = 3;
 
     /*
-        Result (represents the final state of the game: X wins, O wins, a tie,
+        Result (represents the final state of the game: X wins, O wins, a draw,
         or NONE if the game is not yet over)
    */
 
@@ -35,7 +37,7 @@ public class Model {
         /* Initialize grid by filling every square with empty marks */
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < width; j++) {
-                grid[i][j] = Mark.EMPTY;
+                grid[i][j] = EMPTY;
             }
         }
     }
@@ -45,6 +47,7 @@ public class Model {
         int width = 0;
         int outrage = 3;
 
+        System.out.println();
         System.out.println("Choose Board size: " + DEFAULT_MIN_WIDTH + "-" + DEFAULT_MAX_WIDTH);
         System.out.print("Your choice: ");
 
@@ -52,7 +55,7 @@ public class Model {
 
             width = scanner.nextInt();
 
-            while (width < DEFAULT_MIN_WIDTH || width > DEFAULT_MAX_WIDTH) {
+            while ((width < DEFAULT_MIN_WIDTH || width > DEFAULT_MAX_WIDTH) && outrage > 0) {
 
                 if (--outrage == 0) {
 
@@ -79,7 +82,7 @@ public class Model {
         grid[row][column] = mark;
     }
 
-    public void placeMark(int row, int col) {
+    public void placeMark(int row, int column) {
 
          /*
             Place the current player's mark in the square at the specified
@@ -87,12 +90,12 @@ public class Model {
             empty!
          */
 
-        if (isValidSquare(row, col) && (isMarkEmpty(row, col))) {
+        if (isValidSquare(row, column)) {
             if (isPlayerTurn) {
-                grid[row][col] = Mark.Player;
+                grid[row][column] = Player;
                 isPlayerTurn = false;
             } else {
-                grid[row][col] = Mark.Computer;
+                grid[row][column] = Computer;
                 isPlayerTurn = true;
             }
 
@@ -100,34 +103,37 @@ public class Model {
         }
     }
 
-    public boolean isValidSquare(int row, int col) {
+    public boolean isValidSquare(int row, int column) {
 
         /* Return true if specified location is within grid bounds */
         boolean ifRow = row >= 0 && row <= width - 1;
-        boolean ifCol = col >= 0 && col <= width - 1;
+        boolean ifCol = column >= 0 && column <= width - 1;
 
-        return ifRow && ifCol && isMarkEmpty(row, col);
+        return ifRow && ifCol && isMarkEmpty(row, column);
     }
 
-    public Mark getMark(int row, int col) {
+    public Mark getMark(int row, int column) {
 
         /* Return mark from the square at the specified location */
-        return grid[row][col];
+        return grid[row][column];
     }
 
     public Result getResult() {
         
         /*
             Use isMarkWin() to see if X or O is the winner, if the game is a
-            tie, or if the game is not over, and return the corresponding Result
+            draw, or if the game is not over, and return the corresponding Result
             value
         */
 
-        if (isMarkWin(Mark.Player)) {
+        if (isMarkWin(Player)) {
+            availableMoves = 0;
             return Result.Player;
-        } else if (isMarkWin(Mark.Computer)) {
+        } else if (isMarkWin(Computer)) {
+            availableMoves = 0;
             return Result.Computer;
-        } else if (isTie()) {
+        } else if (isDraw()) {
+            availableMoves = 0;
             return Result.DRAW;
         } else {
             return Result.NONE;
@@ -138,8 +144,8 @@ public class Model {
         int marksPerRow = 0;
 
         for (int row = 0; row < width; row++) {
-            for (int col = 0; col < width; col++) {
-                if (getMark(row, col) == mark) {
+            for (int column = 0; column < width; column++) {
+                if (getMark(row, column) == mark) {
                     marksPerRow++;
                 } else {
                     marksPerRow = 0;
@@ -157,9 +163,9 @@ public class Model {
     private boolean checkWinVertical(Mark mark) {
         int marksPerRow = 0;
 
-        for (int col = 0; col < width; col++) {
+        for (int column = 0; column < width; column++) {
             for (int row = 0; row < width; row++) {
-                if (getMark(row, col) == mark) {
+                if (getMark(row, column) == mark) {
                     marksPerRow++;
                 } else {
                     marksPerRow = 0;
@@ -219,18 +225,18 @@ public class Model {
         return isWinHorizontal || isWinVertical || isWinDiagonalFromTopLeftToBottomRight || isWinDiagonalFromBottomLeftToTopRight;
     }
 
-    protected boolean isTie() {
+    protected boolean isDraw() {
 
-        /* Check the squares of the board to see if the game is a tie */
+        /* Check the squares of the board to see if the game is a draw */
         for (int i = 0; i < width; i++) {
             for (int j = 0; j < width; j++) {
-                if (getMark(i, j) == Mark.EMPTY) {
+                if (getMark(i, j) == EMPTY) {
                     return false;
                 }
             }
         }
 
-        return !isMarkWin(Mark.Player) && !isMarkWin(Mark.Computer);
+        return !isMarkWin(Player) && !isMarkWin(Computer);
     }
 
     public boolean isPlayerTurn() {
@@ -245,7 +251,7 @@ public class Model {
 
     public boolean isMarkEmpty(int row, int column) {
 
-        return getMark(row, column) == Mark.EMPTY;
+        return getMark(row, column) == EMPTY;
     }
 
     public int getWidth() {

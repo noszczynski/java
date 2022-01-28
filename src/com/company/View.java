@@ -14,14 +14,19 @@ public class View extends JPanel implements ActionListener {
     private final JButton[][] buttons;
     private final Difficulty difficulty;
 
+    private int maxAIDepth = 6;
+
     public View() {
 
         Difficulty difficulty = requestDifficulty();
-
-        this.model = new Model(difficulty);
         this.difficulty = difficulty;
 
+        this.model = new Model(difficulty);
         int modelWidth = model.getWidth();
+
+        if (difficulty != Difficulty.Easy) {
+            this.maxAIDepth = requestMaxAIDepth();
+        }
 
         /* head panel */
         JPanel squaresPanel = new JPanel(new GridLayout(modelWidth + 1, modelWidth + 1));
@@ -81,6 +86,52 @@ public class View extends JPanel implements ActionListener {
         }
     }
 
+    private int requestMaxAIDepth() {
+        Scanner scanner = new Scanner(System.in);
+
+        int
+                userOption = 0,
+                outrage = 3,
+                modelWidth = model.getWidth(),
+                max = modelWidth * modelWidth,
+                min = difficulty == Difficulty.Hard ? (int) Math.floor(max / 2) : 1;
+
+        System.out.println();
+        System.out.println(
+                "Determine how many moves AI should predict forward." +
+                        "\nThe Hard difficulty level does not allow for less than the board size minus two." +
+                        "\nYour minimum is: " + min +
+                        "\nYour maximum is: " + max +
+                        "\nRemember - Value higher than 12 may slow game down seriously."
+        );
+        System.out.print("Your choice: ");
+
+        try {
+
+            userOption = scanner.nextInt();
+
+            while ((userOption < min || userOption > max) && outrage > 0) {
+
+                if (--outrage == 0) {
+                    int defaultDepth = Math.min(max, 8);
+                    System.out.println("If you are unable to choose by yourself, the system has selected a default value for you: " + defaultDepth);
+                    userOption = defaultDepth;
+                } else {
+
+                    System.out.println("Error! Use integer values between " + min + " and " + max + ". " + outrage + " tries left.");
+                    System.out.print("Your choice: ");
+
+                    userOption = scanner.nextInt();
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Fatal Error! Use integer values between " + min + " and " + max + ". " + outrage + " tries left.");
+        }
+
+        return userOption;
+    }
+
     private Difficulty requestDifficulty() {
         Scanner scanner = new Scanner(System.in);
         Difficulty[] options = {Difficulty.Easy, Difficulty.Normal, Difficulty.Hard};
@@ -88,6 +139,7 @@ public class View extends JPanel implements ActionListener {
         int userOption = 0;
         int outrage = 3;
 
+        System.out.println();
         System.out.println("Choose Difficulty level:");
         System.out.println("1. Easy");
         System.out.println("2. Normal");
@@ -98,7 +150,7 @@ public class View extends JPanel implements ActionListener {
 
             userOption = scanner.nextInt();
 
-            while (userOption < 1 || userOption > options.length) {
+            while ((userOption < 1 || userOption > options.length) && outrage > 0) {
                 if (--outrage == 0) {
 
                     System.out.println("If you are unable to choose by yourself, the system has selected a default value for you: " + Difficulty.Easy);
@@ -131,19 +183,27 @@ public class View extends JPanel implements ActionListener {
         JDialog dialog = new JDialog(frame, "Winner");
 
         dialog.setSize(new Dimension(256, 128));
-        dialog.setVisible(true);
-        dialog.add(new JLabel("Winner is " + model.getResult().toString().trim()));
 
-        add(dialog);
+        System.out.println(model.isDraw() + ":" + model.getResult().toString().trim());
+        dialog.setVisible(true);
+
+        if (model.isDraw()) {
+            dialog.add(new JLabel(model.getResult().toString().trim() + "!"));
+        } else {
+            dialog.add(new JLabel("The winner is " + model.getResult().toString().trim()));
+        }
+
     }
 
     private void checkResult(int row, int column) {
 
-        model.placeMark(row, column);
-        buttons[row][column].setText(model.getMark(row, column).toString());
+        if (model.isMarkEmpty(row, column)) {
+            model.placeMark(row, column);
+            buttons[row][column].setText(model.getMark(row, column).toString());
 
-        if (model.isMarkWin(model.getMark(row, column)) || model.isTie()) {
-            showResult();
+            if (model.isMarkWin(model.getMark(row, column)) || model.isDraw()) {
+                showResult();
+            }
         }
     }
 
@@ -163,7 +223,7 @@ public class View extends JPanel implements ActionListener {
         if (difficulty == Difficulty.Easy) {
             move = AIPlayerEasy.makeMove(model);
         } else {
-            move = AIPlayerHard.makeMove(model);
+            move = AIPlayerHard.makeMove(model, maxAIDepth);
         }
 
         checkResult(move[0], move[1]);
@@ -177,9 +237,10 @@ public class View extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        if (model.isPlayerTurn()) {
-            makePlayerMove((JButton) e.getSource());
+        if (model.anyMovesAvailable()) {
+            if (model.isPlayerTurn()) {
+                makePlayerMove((JButton) e.getSource());
+            }
         }
     }
 }
