@@ -11,8 +11,75 @@ import javax.swing.border.LineBorder;
 
 public class View extends JPanel implements ActionListener {
     private final Model model;
-    private final JButton[][] squares;
+    private final JButton[][] buttons;
     private final Difficulty difficulty;
+
+    public View() {
+
+        Difficulty difficulty = requestDifficulty();
+
+        this.model = new Model(difficulty);
+        this.difficulty = difficulty;
+
+        int modelWidth = model.getWidth();
+
+        /* head panel */
+        JPanel squaresPanel = new JPanel(new GridLayout(modelWidth + 1, modelWidth + 1));
+
+        /* difficulty panel */
+//        JPanel difficultyPanel = new JPanel(new GridLayout(1, 1));
+//        ButtonGroup difficultyGroup = new ButtonGroup();
+
+//        for (int i = 0; i < 2; i++) {
+//            JRadioButton input;
+//
+//            input = new JRadioButton("Difficulty " + i);
+//            input.setPreferredSize(new Dimension(124, 64));
+//
+//            difficultyGroup.add(input);
+//            difficultyPanel.add(input);
+//        }
+
+        /* accept panel */
+//        JButton acceptButton = new JButton();
+//        acceptButton.setPreferredSize(new Dimension(124, 64));
+//        acceptButton.setBorder(new LineBorder(Color.BLACK));
+//        acceptButton.addActionListener(this);
+//        acceptButton.setText("Start");
+//        difficultyPanel.add(acceptButton);
+
+        /* buttons panel */
+        buttons = new JButton[modelWidth][modelWidth];
+
+        /* loop through every row and column */
+        for (int row = 0; row < modelWidth; row++) {
+            for (int column = 0; column < modelWidth; column++) {
+
+                JButton button = new JButton();
+                button.setBorder(new LineBorder(Color.BLACK));
+                button.setPreferredSize(new Dimension(124, 124));
+                button.addActionListener(this);
+                button.setName("Square[" + row + "][" + column + "]");
+
+                buttons[row][column] = button;
+
+                /* finish initializing JButton; add to JPanel */
+                squaresPanel.add(buttons[row][column]);
+            }
+        }
+
+        /* add difficultyPanel to view panel */
+//        add(difficultyPanel);
+
+        System.out.println("Starting game...");
+
+        /* add squarePanel to view panel */
+        add(squaresPanel);
+
+        if (difficulty == Difficulty.Hard) {
+            makeInitialComputerMove();
+        }
+    }
 
     private Difficulty requestDifficulty() {
         Scanner scanner = new Scanner(System.in);
@@ -52,83 +119,17 @@ public class View extends JPanel implements ActionListener {
         return options[userOption - 1];
     }
 
-    public View() {
-
-        Difficulty difficulty = requestDifficulty();
-
-        this.model = new Model(difficulty);
-        this.difficulty = difficulty;
-
-        int modelWidth = model.getWidth();
-
-        /* head panel */
-        JPanel squaresPanel = new JPanel(new GridLayout(modelWidth + 1, modelWidth + 1));
-
-        /* difficulty panel */
-//        JPanel difficultyPanel = new JPanel(new GridLayout(1, 1));
-//        ButtonGroup difficultyGroup = new ButtonGroup();
-
-//        for (int i = 0; i < 2; i++) {
-//            JRadioButton input;
-//
-//            input = new JRadioButton("Difficulty " + i);
-//            input.setPreferredSize(new Dimension(124, 64));
-//
-//            difficultyGroup.add(input);
-//            difficultyPanel.add(input);
-//        }
-
-        /* accept panel */
-//        JButton acceptButton = new JButton();
-//        acceptButton.setPreferredSize(new Dimension(124, 64));
-//        acceptButton.setBorder(new LineBorder(Color.BLACK));
-//        acceptButton.addActionListener(this);
-//        acceptButton.setText("Start");
-//        difficultyPanel.add(acceptButton);
-
-        /* buttons panel */
-        squares = new JButton[modelWidth][modelWidth];
-
-        /* loop through every row and column */
-        for (int row = 0; row < modelWidth; row++) {
-            for (int column = 0; column < modelWidth; column++) {
-
-                JButton button = new JButton();
-                button.setBorder(new LineBorder(Color.BLACK));
-                button.setPreferredSize(new Dimension(124, 124));
-                button.addActionListener(this);
-                button.setName("Square[" + row + "][" + column + "]");
-
-                squares[row][column] = button;
-
-                /* finish initializing JButton; add to JPanel */
-                squaresPanel.add(squares[row][column]);
-            }
-        }
-
-        /* add difficultyPanel to view panel */
-//        add(difficultyPanel);
-
-        System.out.println("Starting...");
-
-        /* add squarePanel to view panel */
-        add(squaresPanel);
-
-        if (difficulty == Difficulty.Hard) {
-            makeInitialComputerMove();
-        }
-    }
-
     public Model getModel() {
 
         return model;
     }
 
-    public void showResult(String r) {
+    public void showResult() {
 
         /* Display the final winner */
         JFrame frame = new JFrame();
         JDialog dialog = new JDialog(frame, "Winner");
+
         dialog.setSize(new Dimension(256, 128));
         dialog.setVisible(true);
         dialog.add(new JLabel("Winner is " + model.getResult().toString().trim()));
@@ -139,12 +140,10 @@ public class View extends JPanel implements ActionListener {
     private void checkResult(int row, int column) {
 
         model.placeMark(row, column);
-        squares[row][column].setText(model.getMark(row, column).toString());
+        buttons[row][column].setText(model.getMark(row, column).toString());
 
-        if (model.isMarkWin(model.getMark(row, column))) {
-            showResult(model.getMark(row, column).toString());
-        } else if (model.isTie()) {
-            showResult(model.getMark(row, column).toString().toUpperCase().trim());
+        if (model.isMarkWin(model.getMark(row, column)) || model.isTie()) {
+            showResult();
         }
     }
 
