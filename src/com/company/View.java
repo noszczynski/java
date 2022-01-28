@@ -14,8 +14,6 @@ public class View extends JPanel implements ActionListener {
     private final JButton[][] squares;
     private final Difficulty difficulty;
 
-    public JLabel resultLabel = new JLabel("Result: ");
-
     private Difficulty requestDifficulty() {
         Scanner scanner = new Scanner(System.in);
         Difficulty[] options = {Difficulty.Easy, Difficulty.Normal, Difficulty.Hard};
@@ -108,10 +106,6 @@ public class View extends JPanel implements ActionListener {
             }
         }
 
-        resultLabel.setName("resultLabel");
-        resultLabel.setFont(new Font("Courier New", Font.PLAIN, 48));
-        squaresPanel.add(resultLabel);
-
         /* add difficultyPanel to view panel */
 //        add(difficultyPanel);
 
@@ -133,15 +127,19 @@ public class View extends JPanel implements ActionListener {
     public void showResult(String r) {
 
         /* Display the final winner */
-        resultLabel.setText(model.getResult().toString().toUpperCase().trim());
+        JFrame frame = new JFrame();
+        JDialog dialog = new JDialog(frame, "Winner");
+        dialog.setSize(new Dimension(256, 128));
+        dialog.setVisible(true);
+        dialog.add(new JLabel("Winner is " + model.getResult().toString().trim()));
+
+        add(dialog);
     }
 
     private void checkResult(int row, int column) {
 
         model.placeMark(row, column);
-        System.out.println(squares[row][column]);
         squares[row][column].setText(model.getMark(row, column).toString());
-        System.out.println(squares[row][column]);
 
         if (model.isMarkWin(model.getMark(row, column))) {
             showResult(model.getMark(row, column).toString());
