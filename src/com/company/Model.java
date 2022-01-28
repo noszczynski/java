@@ -1,5 +1,7 @@
 package com.company;
 
+import java.util.Scanner;
+
 public class Model {
 
     private static final int DEFAULT_MIN_WIDTH = 3;
@@ -18,11 +20,12 @@ public class Model {
 
     public Model(Difficulty difficulty) {
 
-        /* Initialize width; Player (X) goes first */
-        int width = getBoardWidth();
+        /* Initialize width */
+        int width = requestBoardWidth();
+        this.width = width;
+
         availableMoves = width * width;
 
-        this.width = width;
         /* Computer starts only on hard difficulty */
         isPlayerTurn = difficulty != Difficulty.Hard;
 
@@ -37,9 +40,38 @@ public class Model {
         }
     }
 
-    private int getBoardWidth() {
+    private int requestBoardWidth() {
+        Scanner scanner = new Scanner(System.in);
+        int width = 0;
+        int outrage = 3;
 
-        return DEFAULT_WIDTH;
+        System.out.println("Choose Board size: " + DEFAULT_MIN_WIDTH + "-" + DEFAULT_MAX_WIDTH);
+        System.out.print("Your choice: ");
+
+        try {
+
+            width = scanner.nextInt();
+
+            while (width < DEFAULT_MIN_WIDTH || width > DEFAULT_MAX_WIDTH) {
+
+                if (--outrage == 0) {
+
+                    System.out.println("If you are unable to choose by yourself, the system has selected a default value for you: " + DEFAULT_WIDTH);
+                    width = DEFAULT_WIDTH;
+                } else {
+
+                    System.out.println("Error! Use integer values between " + DEFAULT_MIN_WIDTH + " and " + DEFAULT_MAX_WIDTH + ". " + outrage + " tries left.");
+                    System.out.print("Your choice: ");
+
+                    width = scanner.nextInt();
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("Fatal Error! Use integer values between " + DEFAULT_MIN_WIDTH + " and " + DEFAULT_MAX_WIDTH);
+        }
+
+        return width;
     }
 
     public void setMark(int row, int column, Mark mark) {
@@ -177,7 +209,7 @@ public class Model {
     }
 
     protected boolean isMarkWin(Mark mark) {
-        
+
         /* Check the squares of the board to see if the specified mark is the winner */
         boolean isWinHorizontal = checkWinHorizontal(mark);
         boolean isWinVertical = checkWinVertical(mark);
@@ -213,7 +245,7 @@ public class Model {
 
     public boolean isMarkEmpty(int row, int column) {
 
-        return getMark(row,column) == Mark.EMPTY;
+        return getMark(row, column) == Mark.EMPTY;
     }
 
     public int getWidth() {

@@ -1,6 +1,6 @@
 package com.company;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 // TODO działające AI hard
 // TODO blokada po wygranej oraz możliwość resetu oraz wprowadzenia wielkości planszy
@@ -22,17 +22,14 @@ public class Main {
     public static void main(String[] args) {
         try {
             /* Create game objects */
-            Difficulty difficulty = Difficulty.Hard;
-            Model model = new Model(difficulty);
-            View view = new View(model, difficulty);
-
+            View view = new View();
+            Model model = view.getModel();
 
             /* Create the frame */
-            JFrame frame = new JFrame(GAME_NAME + " by " + AUTHOR + ". Difficulty " + difficulty);
+            JFrame frame = new JFrame(GAME_NAME + " by " + AUTHOR);
 
             /* Set the frame */
-            int boardWidth = model.getWidth();
-            frame.setSize(boardWidth * 200, boardWidth * 200);
+            frame.setSize(model.getWidth() * 200, model.getWidth() * 200);
 
             /* Configure the frame */
             frame.add(view);

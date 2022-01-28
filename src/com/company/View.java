@@ -4,26 +4,91 @@ import java.awt.Color;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Scanner;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 public class View extends JPanel implements ActionListener {
-
     private final Model model;
     private final JButton[][] squares;
     private final Difficulty difficulty;
 
     public JLabel resultLabel = new JLabel("Result: ");
 
-    public View(Model model, Difficulty difficulty) {
+    private Difficulty requestDifficulty() {
+        Scanner scanner = new Scanner(System.in);
+        Difficulty[] options = {Difficulty.Easy, Difficulty.Normal, Difficulty.Hard};
 
-        this.model = model;
+        int userOption = 0;
+        int outrage = 3;
+
+        System.out.println("Choose Difficulty level:");
+        System.out.println("1. Easy");
+        System.out.println("2. Normal");
+        System.out.println("3. Hard");
+        System.out.print("Your choice: ");
+
+        try {
+
+            userOption = scanner.nextInt();
+
+            while (userOption < 1 || userOption > options.length) {
+                if (--outrage == 0) {
+
+                    System.out.println("If you are unable to choose by yourself, the system has selected a default value for you: " + Difficulty.Easy);
+                    userOption = 1;
+                } else {
+
+                    System.out.println("Error! Use integer values between " + 1 + " and " + 3 + ". " + outrage + " tries left.");
+                    System.out.print("Your choice: ");
+                    userOption = scanner.nextInt();
+                }
+            }
+
+            System.out.println("You choose: " + options[userOption - 1]);
+        } catch (Exception e) {
+            System.out.println("Fatal Error! Use integer values between " + 1 + " and " + 3);
+        }
+
+        return options[userOption - 1];
+    }
+
+    public View() {
+
+        Difficulty difficulty = requestDifficulty();
+
+        this.model = new Model(difficulty);
         this.difficulty = difficulty;
-        int modelWidth = this.model.getWidth();
 
+        int modelWidth = model.getWidth();
+
+        /* head panel */
         JPanel squaresPanel = new JPanel(new GridLayout(modelWidth + 1, modelWidth + 1));
 
+        /* difficulty panel */
+//        JPanel difficultyPanel = new JPanel(new GridLayout(1, 1));
+//        ButtonGroup difficultyGroup = new ButtonGroup();
+
+//        for (int i = 0; i < 2; i++) {
+//            JRadioButton input;
+//
+//            input = new JRadioButton("Difficulty " + i);
+//            input.setPreferredSize(new Dimension(124, 64));
+//
+//            difficultyGroup.add(input);
+//            difficultyPanel.add(input);
+//        }
+
+        /* accept panel */
+//        JButton acceptButton = new JButton();
+//        acceptButton.setPreferredSize(new Dimension(124, 64));
+//        acceptButton.setBorder(new LineBorder(Color.BLACK));
+//        acceptButton.addActionListener(this);
+//        acceptButton.setText("Start");
+//        difficultyPanel.add(acceptButton);
+
+        /* buttons panel */
         squares = new JButton[modelWidth][modelWidth];
 
         /* loop through every row and column */
@@ -47,12 +112,22 @@ public class View extends JPanel implements ActionListener {
         resultLabel.setFont(new Font("Courier New", Font.PLAIN, 48));
         squaresPanel.add(resultLabel);
 
+        /* add difficultyPanel to view panel */
+//        add(difficultyPanel);
+
+        System.out.println("Starting...");
+
         /* add squarePanel to view panel */
         add(squaresPanel);
 
         if (difficulty == Difficulty.Hard) {
             makeInitialComputerMove();
         }
+    }
+
+    public Model getModel() {
+
+        return model;
     }
 
     public void showResult(String r) {
@@ -69,13 +144,9 @@ public class View extends JPanel implements ActionListener {
         System.out.println(squares[row][column]);
 
         if (model.isMarkWin(model.getMark(row, column))) {
-            System.out.println("Wygrał: " + model.getMark(row, column));
             showResult(model.getMark(row, column).toString());
         } else if (model.isTie()) {
-            System.out.println("Remis");
             showResult(model.getMark(row, column).toString().toUpperCase().trim());
-        } else {
-            System.out.println("Gramy dalej");
         }
     }
 
@@ -109,9 +180,6 @@ public class View extends JPanel implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        System.out.println("Log 1");
-        System.out.println(model.isPlayerTurn());
 
         if (model.isPlayerTurn()) {
             makePlayerMove((JButton) e.getSource());
