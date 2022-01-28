@@ -31,7 +31,7 @@ public class View extends JPanel implements ActionListener {
     private final JButton[][] squares;
     private final Difficulty difficulty;
 
-    public JLabel resultLabel = new JLabel("Result");
+    public JLabel resultLabel = new JLabel("Result: ");
 
     public View(Model model, Difficulty difficulty) {
 

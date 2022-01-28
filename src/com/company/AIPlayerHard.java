@@ -1,6 +1,5 @@
 package com.company;
 
-import java.util.Arrays;
 import java.lang.*;
 
 import static com.company.Mark.*;
@@ -14,16 +13,11 @@ public class AIPlayerHard implements AIPlayer {
     /* Get best move for computer and return int[2] of {row, col} */
     public static int[] makeMove(Model model) {
 
-        System.out.println(" ");
-        System.out.println("Make move!");
-
         int[] bestMove = new int[]{-1, -1};
         int bestValue = Integer.MIN_VALUE;
 
         for (int row = 0; row < model.getWidth(); row++) {
             for (int col = 0; col < model.getWidth(); col++) {
-                System.out.println("\tAnalize: [" + row + "][" + col + "]");
-                System.out.println("\t\tis empty?: " + model.isMarkEmpty(row, col));
                 if (model.isMarkEmpty(row, col)) {
 
                     model.setMark(row, col, Computer);
@@ -35,10 +29,7 @@ public class AIPlayerHard implements AIPlayer {
                             false
                     );
                     model.setMark(row, col, EMPTY);
-                    System.out.println("\t\tfield: [" + row + "][" + col + "] is value: " + moveValue);
                     if (moveValue > bestValue) {
-                        System.out.println("\t\trow|col: " + row + "|" + col);
-                        System.out.println("\t\tmoveValue|bestValue: " + moveValue + "|" + bestValue);
                         bestMove[0] = row;
                         bestMove[1] = col;
                         bestValue = moveValue;
@@ -47,7 +38,6 @@ public class AIPlayerHard implements AIPlayer {
             }
         }
 
-        System.out.println("bestMove: " + Arrays.toString(bestMove));
         return bestMove;
     }
 
@@ -71,7 +61,6 @@ public class AIPlayerHard implements AIPlayer {
                 rowSum += model.getMark(row, col).getMark();
             }
 
-//            System.out.println("\t\t\tRow sum: " + rowSum);
 
             if (rowSum == aiWin) {
                 return 10 + depth;
@@ -91,7 +80,6 @@ public class AIPlayerHard implements AIPlayer {
                 rowSum += model.getMark(row, col).getMark();
             }
 
-//            System.out.println("\t\t\tRow sum: " + rowSum);
 
             if (rowSum == aiWin) {
                 return 10 + depth;
@@ -111,7 +99,6 @@ public class AIPlayerHard implements AIPlayer {
             rowSum += model.getMark(i, i).getMark();
         }
 
-//        System.out.println("\t\t\tRow sum: " + rowSum);
 
         if (rowSum == aiWin) {
             return 10 + depth;
@@ -129,7 +116,6 @@ public class AIPlayerHard implements AIPlayer {
             rowSum += model.getMark(i, indexMax - i).getMark();
         }
 
-//        System.out.println("\t\t\tRow sum: " + rowSum);
 
         if (rowSum == aiWin) {
             return 10 + depth;
@@ -146,7 +132,6 @@ public class AIPlayerHard implements AIPlayer {
 
         int boardVal = evaluateModel(model, depth);
 
-//        System.out.println("\t\t\tboardVal: " + boardVal + ", depth: " + depth);
 
         if (Math.abs(boardVal) > 0 || depth == 0 || !model.anyMovesAvailable()) {
             return boardVal;

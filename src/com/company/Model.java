@@ -1,7 +1,5 @@
 package com.company;
 
-import java.util.Scanner;
-
 public class Model {
 
     private static final int DEFAULT_MIN_WIDTH = 3;
@@ -40,18 +38,8 @@ public class Model {
     }
 
     private int getBoardWidth() {
-        Scanner scanner = new Scanner(System.in);
-        int width = DEFAULT_WIDTH;
 
-        //TODO uncomment on end of work
-//        width = scanner.nextInt();
-
-//        while (width < DEFAULT_MIN_WIDTH || width > DEFAULT_MAX_WIDTH) {
-//            System.out.println("Minimal width is " + DEFAULT_MIN_WIDTH + ", but maximal is " + DEFAULT_MAX_WIDTH);
-//            width = scanner.nextInt();
-//        }
-
-        return width;
+        return DEFAULT_WIDTH;
     }
 
     public void setMark(int row, int column, Mark mark) {
@@ -68,7 +56,6 @@ public class Model {
          */
 
         if (isValidSquare(row, col) && (isMarkEmpty(row, col))) {
-            System.out.println("Hejka");
             if (isPlayerTurn) {
                 grid[row][col] = Mark.Player;
                 isPlayerTurn = false;
@@ -109,7 +96,7 @@ public class Model {
         } else if (isMarkWin(Mark.Computer)) {
             return Result.Computer;
         } else if (isTie()) {
-            return Result.TIE;
+            return Result.DRAW;
         } else {
             return Result.NONE;
         }
@@ -191,10 +178,7 @@ public class Model {
 
     protected boolean isMarkWin(Mark mark) {
         
-        /*
-            Check the squares of the board to see if the specified mark is the
-            winner
-        */
+        /* Check the squares of the board to see if the specified mark is the winner */
         boolean isWinHorizontal = checkWinHorizontal(mark);
         boolean isWinVertical = checkWinVertical(mark);
         boolean isWinDiagonalFromTopLeftToBottomRight = checkWinDiagonalFromTopLeftToBottomRight(mark);
@@ -217,27 +201,23 @@ public class Model {
         return !isMarkWin(Mark.Player) && !isMarkWin(Mark.Computer);
     }
 
-    public boolean isGameOver() {
-        return Result.NONE != getResult();
-    }
-
     public boolean isPlayerTurn() {
+
         return isPlayerTurn;
     }
 
-    public int getAvailableMoves() {
-        return availableMoves;
-    }
-
     public boolean anyMovesAvailable() {
+
         return availableMoves > 0;
     }
 
     public boolean isMarkEmpty(int row, int column) {
+
         return getMark(row,column) == Mark.EMPTY;
     }
 
     public int getWidth() {
+
         return width;
     }
 }
