@@ -116,6 +116,8 @@ public class View extends JPanel implements ActionListener {
 
         if (difficulty == Difficulty.Hard) {
             move = AIPlayerHard.makeMove(model);
+        } else if (difficulty == Difficulty.Normal) {
+            move = AIPlayerNormal.makeMove(model);
         } else {
             move = AIPlayerEasy.makeMove(model);
         }
