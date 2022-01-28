@@ -2,22 +2,35 @@ package com.company;
 
 public enum Mark {
 
-    Player("X"),
-    Computer("O"),
-    EMPTY(" ");
+    Player('X'),
+    Computer('O'),
+    EMPTY(' ');
 
-    private final String message;
+    private final char message;
 
-    Mark(String msg) {
+    Mark(char msg) {
+
         message = msg;
     }
 
     public boolean isEmpty() {
+
         return this == EMPTY;
+    }
+
+    public boolean isMarked() {
+
+        return !isEmpty();
+    }
+
+    public char getMark() {
+
+        return this.message;
     }
 
     @Override
     public String toString() {
-        return message;
+
+        return String.valueOf(message);
     }
 }

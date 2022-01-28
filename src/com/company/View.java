@@ -51,7 +51,7 @@ public class View extends JPanel implements ActionListener {
                 button.setBorder(new LineBorder(Color.BLACK));
                 button.setPreferredSize(new Dimension(124, 124));
                 button.addActionListener(this);
-                button.setName("Square" + row + column);
+                button.setName("Square[" + row + "][" + column + "]");
 
                 squares[row][column] = button;
 
@@ -90,10 +90,10 @@ public class View extends JPanel implements ActionListener {
 
     private void checkResult(JButton clickedBtn) {
 
-        int row = (int) (clickedBtn.getName().charAt(6)) - 48;
-        int column = (int) (clickedBtn.getName().charAt(7)) - 48;
+        int row = (int) (clickedBtn.getName().charAt(7)) - 48;
+        int column = (int) (clickedBtn.getName().charAt(10)) - 48;
 
-        model.makeMark(row, column);
+        model.placeMark(row, column);
         clickedBtn.setText(model.getMark(row, column).toString());
 
         if (model.isMarkWin(model.getMark(row, column))) {
@@ -110,16 +110,13 @@ public class View extends JPanel implements ActionListener {
 
     private void makeComputerMove() {
 
-        AIPlayer aiPlayer;
+        int[] move;
 
         if (difficulty == Difficulty.Hard) {
-            aiPlayer = new AIPlayerHard(model);
+            move = AIPlayerHard.makeMove(model);
         } else {
-            aiPlayer = new AIPlayerEasy(model);
+            move = AIPlayerEasy.makeMove(model);
         }
-
-//        System.out.println("You choose difficulty level: " + difficulty);
-        int[] move = aiPlayer.makeMove();
 
         checkResult(squares[move[0]][move[1]]);
     }

@@ -16,11 +16,13 @@ public class Model {
     private final Mark[][] grid;    /* Game grid */
     private boolean isPlayerTurn;   /* True if Player is current player */
     private final int width;        /* Size of game grid */
+    private int availableMoves;
 
     public Model() {
 
         /* Initialize width; Player (X) goes first */
         int width = getBoardWidth();
+        availableMoves = width * width;
 
         this.width = width;
         isPlayerTurn = true;
@@ -53,10 +55,11 @@ public class Model {
     }
 
     public void setMark(int row, int column, Mark mark) {
+
         grid[row][column] = mark;
     }
 
-    public void makeMark(int row, int col) {
+    public void placeMark(int row, int col) {
 
          /*
             Place the current player's mark in the square at the specified
@@ -72,6 +75,8 @@ public class Model {
                 grid[row][col] = Mark.Computer;
                 isPlayerTurn = true;
             }
+
+            availableMoves--;
         }
     }
 
@@ -217,6 +222,10 @@ public class Model {
 
     public boolean isPlayerTurn() {
         return isPlayerTurn;
+    }
+
+    public boolean anyMovesAvailable() {
+        return availableMoves > 0;
     }
 
     public boolean isMarkEmpty(int row, int column) {

@@ -3,13 +3,10 @@ package com.company;
 import java.util.Random;
 
 public class AIPlayerEasy implements AIPlayer {
-    Model model;
-
-    public AIPlayerEasy(Model model) {
-        this.model = model;
+    public AIPlayerEasy() {
     }
 
-    public int[] makeMove() {
+    public static int[] makeMove(Model model) {
         Random rand = new Random();
 
         int row = 0, column = 0;
