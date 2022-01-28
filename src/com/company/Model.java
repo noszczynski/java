@@ -16,7 +16,7 @@ public class Model {
     private final int width;        /* Size of game grid */
     private int availableMoves;     /* Moves to end game */
 
-    public Model(View.Difficulty difficulty) {
+    public Model(Difficulty difficulty) {
 
         /* Initialize width; Player (X) goes first */
         int width = getBoardWidth();
@@ -24,7 +24,7 @@ public class Model {
 
         this.width = width;
         /* Computer starts only on hard difficulty */
-        isPlayerTurn = difficulty != View.Difficulty.Hard;
+        isPlayerTurn = difficulty != Difficulty.Hard;
 
         /* Create grid (width x width) as a 2D Mark array */
         grid = new Mark[width][width];

@@ -22,7 +22,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             /* Create game objects */
-            View.Difficulty difficulty = View.Difficulty.Hard;
+            Difficulty difficulty = Difficulty.Hard;
             Model model = new Model(difficulty);
             View view = new View(model, difficulty);
 

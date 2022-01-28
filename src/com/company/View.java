@@ -9,23 +9,6 @@ import javax.swing.*;
 import javax.swing.border.LineBorder;
 
 public class View extends JPanel implements ActionListener {
-    public enum Difficulty {
-
-        Easy("Easy"),
-        Normal("Normal"),
-        Hard("Hard");
-
-        private final String message;
-
-        private Difficulty(String msg) {
-            message = msg;
-        }
-
-        @Override
-        public String toString() {
-            return message;
-        }
-    }
 
     private final Model model;
     private final JButton[][] squares;
@@ -55,12 +38,8 @@ public class View extends JPanel implements ActionListener {
 
                 squares[row][column] = button;
 
-                /* testing the creation of buttons */
-//                System.out.println("Created Square [" + row + ":" + column + "]");
-
                 /* finish initializing JButton; add to JPanel */
                 squaresPanel.add(squares[row][column]);
-//                System.out.println("Square [" + row + ":" + column + "] has been added to the panel.");
             }
         }
 
@@ -75,16 +54,6 @@ public class View extends JPanel implements ActionListener {
             makeInitialComputerMove();
         }
     }
-
-//    public void showNextMovePrompt() {
-//
-//        /* Display a prompt for the player's next move (see examples) */
-//        if (model.isXTurn()) {
-//            System.out.print("\nPlayer 1 (X) move: \nEnter the row and column numbers, separated by a space: ");
-//        } else {
-//            System.out.print("\nPlayer 2 (O) move: \nEnter the row and column numbers, separated by a space: ");
-//        }
-//    }
 
     public void showResult(String r) {
 
